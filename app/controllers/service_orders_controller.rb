@@ -1,5 +1,5 @@
 class ServiceOrdersController < ApplicationController
-  before_action :set_service_order, only: [:show, :edit, :update, :destroy, :complete, :cancel]
+  before_action :set_service_order, only: [:show, :edit, :update, :destroy, :complete, :cancel, :pdf]
   before_action :authorize_user!, only: [:edit, :update, :destroy]
 
   # GET /service_orders
