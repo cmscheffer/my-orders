@@ -260,10 +260,6 @@ class ServiceOrderPdfGenerator
       data << ["Valor das Peças:", format_currency(@service_order.parts_value)]
     end
 
-    if @service_order.discount.present? && @service_order.discount > 0
-      data << ["Desconto:", format_currency(@service_order.discount)]
-    end
-
     # Linha de total destacada
     data << [
       { content: "VALOR TOTAL", font_style: :bold },
