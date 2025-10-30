@@ -71,6 +71,16 @@ class ServiceOrdersController < ApplicationController
     end
   end
 
+  # GET /service_orders/1/pdf
+  def pdf
+    pdf_content = ServiceOrderPdfGenerator.new(@service_order).generate
+    
+    send_data pdf_content,
+              filename: "ordem_servico_#{@service_order.id}.pdf",
+              type: 'application/pdf',
+              disposition: 'inline'
+  end
+
   private
 
   def set_service_order

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     member do
       patch :complete
       patch :cancel
+      get :pdf
     end
   end
   

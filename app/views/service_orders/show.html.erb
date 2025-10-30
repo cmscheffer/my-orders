@@ -4,6 +4,9 @@
   </div>
   <div class="col text-end">
     <%= link_to "Voltar", service_orders_path, class: "btn btn-secondary" %>
+    <%= link_to pdf_service_order_path(@service_order), class: "btn btn-primary", target: "_blank" do %>
+      <i class="fas fa-file-pdf"></i> Gerar PDF
+    <% end %>
     <% if current_user.admin? || @service_order.user == current_user %>
       <%= link_to "Editar", edit_service_order_path(@service_order), class: "btn btn-warning" %>
       <%= button_to "Excluir", service_order_path(@service_order), 
