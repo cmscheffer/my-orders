@@ -44,6 +44,8 @@ Sistema web completo para gerenciamento de ordens de serviço desenvolvido em **
 - **Bootstrap 5** - Interface UI
 - **Turbo & Stimulus** - Interatividade
 - **SCSS** - Estilos customizados
+- **Prawn** - Geração de PDF
+- **Prawn-Table** - Tabelas em PDF
 
 ## 📦 Pré-requisitos
 
@@ -229,6 +231,7 @@ rails generate model ModelName
 - 🔧 Seleção de peças utilizadas
 - 💰 Gestão financeira (valor do serviço, peças, desconto, total)
 - 💳 Status e método de pagamento
+- 📄 **Geração de PDF profissional** com todas as informações da ordem
 
 ### Cadastro de Técnicos
 - ➕ Adicionar novos técnicos
@@ -252,6 +255,19 @@ rails generate model ModelName
 - 🔍 Filtros por categoria e status
 - ⚠️ Alertas de estoque baixo
 - 🔢 Código automático gerado
+
+### Geração de PDF
+- 📄 PDF profissional formato A4
+- 📋 Todas as informações da ordem incluídas
+- 💰 Valores formatados em R$ (padrão brasileiro)
+- 📅 Datas em português
+- 📊 Tabela de peças com totais
+- 💵 Resumo financeiro completo
+- ✍️ Espaço para assinatura do cliente
+- 🖨️ Pronto para impressão
+- 📧 Fácil de enviar por email
+- 🔗 Geração com um clique (botão ou ícone)
+- 📱 Compatível com desktop, tablet e mobile
 
 ### Status Disponíveis
 - 🟡 **Pendente** - Ordem aguardando início
