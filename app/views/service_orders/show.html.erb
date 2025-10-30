@@ -58,8 +58,20 @@
             <dd class="col-sm-9"><%= l(@service_order.completed_at, format: :long) %></dd>
           <% end %>
           
-          <dt class="col-sm-3">Responsável:</dt>
+          <dt class="col-sm-3">Criado por:</dt>
           <dd class="col-sm-9"><%= @service_order.user.name %></dd>
+
+          <dt class="col-sm-3">Técnico:</dt>
+          <dd class="col-sm-9">
+            <% if @service_order.technician.present? %>
+              <%= link_to @service_order.technician.full_info, @service_order.technician, class: "text-decoration-none" %>
+              <span class="badge <%= @service_order.technician.status_badge_class %> ms-2">
+                <%= @service_order.technician.status_text %>
+              </span>
+            <% else %>
+              <span class="text-muted">Nenhum técnico atribuído</span>
+            <% end %>
+          </dd>
         </dl>
       </div>
     </div>

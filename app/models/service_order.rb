@@ -1,5 +1,6 @@
 class ServiceOrder < ApplicationRecord
   belongs_to :user
+  belongs_to :technician, optional: true
   has_many :service_order_parts, dependent: :destroy
   has_many :parts, through: :service_order_parts
 

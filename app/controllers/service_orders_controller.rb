@@ -103,6 +103,7 @@ class ServiceOrdersController < ApplicationController
       :payment_method,
       :payment_date,
       :notes,
+      :technician_id,
       service_order_parts_attributes: [:id, :part_id, :quantity, :unit_price, :_destroy]
     )
   end

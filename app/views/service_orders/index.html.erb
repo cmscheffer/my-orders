@@ -49,6 +49,7 @@
               <th>Valor Total</th>
               <th>Status</th>
               <th>Prioridade</th>
+              <th>Técnico</th>
               <th>Data de Vencimento</th>
               <th>Criado em</th>
               <th>Ações</th>
@@ -92,6 +93,13 @@
                   <span class="badge <%= order.priority_badge_class %>">
                     <%= order.priority.humanize %>
                   </span>
+                </td>
+                <td>
+                  <% if order.technician.present? %>
+                    <small><%= order.technician.name %></small>
+                  <% else %>
+                    <span class="text-muted">-</span>
+                  <% end %>
                 </td>
                 <td>
                   <%= order.due_date ? l(order.due_date, format: :long) : "-" %>

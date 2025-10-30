@@ -19,6 +19,13 @@ Rails.application.routes.draw do
     end
   end
   
+  # Technicians routes
+  resources :technicians do
+    member do
+      patch :toggle_active
+    end
+  end
+  
   # Dashboard
   get "dashboard", to: "dashboard#index"
   

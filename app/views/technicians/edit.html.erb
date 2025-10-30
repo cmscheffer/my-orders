@@ -1,0 +1,14 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex align-items-center mb-4">
+        <%= link_to @technician, class: "btn btn-outline-secondary me-3" do %>
+          <i class="fas fa-arrow-left"></i>
+        <% end %>
+        <h1 class="mb-0"><i class="fas fa-user-edit"></i> Editar Técnico</h1>
+      </div>
+
+      <%= render 'form', technician: @technician %>
+    </div>
+  </div>
+</div>

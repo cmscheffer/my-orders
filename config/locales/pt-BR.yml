@@ -3,6 +3,7 @@ pt-BR:
     models:
       user: "Usuário"
       service_order: "Ordem de Serviço"
+      technician: "Técnico"
     attributes:
       user:
         name: "Nome"
@@ -32,6 +33,7 @@ pt-BR:
         payment_method: "Forma de pagamento"
         payment_date: "Data do pagamento"
         notes: "Observações"
+        technician: "Técnico Responsável"
       part:
         name: "Nome da peça"
         code: "Código"
@@ -47,6 +49,14 @@ pt-BR:
         part: "Peça"
         quantity: "Quantidade"
         unit_price: "Preço unitário"
+      technician:
+        name: "Nome"
+        email: "Email"
+        phone: "Telefone"
+        specialty: "Especialidade"
+        notes: "Observações"
+        active: "Ativo"
+        user: "Usuário do Sistema"
     errors:
       messages:
         blank: "não pode ficar em branco"

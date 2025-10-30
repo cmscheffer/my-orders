@@ -46,6 +46,17 @@
         <%= form.label :due_date, "Data de Vencimento", class: "form-label" %>
         <%= form.date_field :due_date, class: "form-control" %>
       </div>
+
+      <div class="mb-3">
+        <%= form.label :technician_id, "Técnico Responsável", class: "form-label" %>
+        <%= form.collection_select :technician_id,
+                                    Technician.active.order(:name),
+                                    :id,
+                                    :full_info,
+                                    { prompt: "Selecione um técnico" },
+                                    class: "form-select" %>
+        <small class="form-text text-muted">Técnico que irá executar o serviço</small>
+      </div>
     </div>
   </div>
 

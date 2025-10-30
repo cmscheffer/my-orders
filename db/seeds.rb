@@ -190,6 +190,57 @@ ServiceOrder.find_or_create_by!(
 end
 puts "✓ OS criada: Formatação de Computador"
 
+# Criar técnicos
+puts "\n👨‍🔧 Criando técnicos..."
+
+tech1 = Technician.find_or_create_by!(email: "carlos@example.com") do |tech|
+  tech.name = "Carlos Alberto"
+  tech.phone = "(11) 98765-1111"
+  tech.specialty = "Hardware"
+  tech.notes = "Especialista em manutenção de computadores e notebooks. 10 anos de experiência."
+  tech.active = true
+  tech.user = user1
+end
+puts "✓ Técnico criado: #{tech1.name}"
+
+tech2 = Technician.find_or_create_by!(email: "fernanda@example.com") do |tech|
+  tech.name = "Fernanda Costa"
+  tech.phone = "(11) 98765-2222"
+  tech.specialty = "Redes"
+  tech.notes = "Certificação CCNA. Experiência em redes corporativas e segurança."
+  tech.active = true
+  tech.user = user2
+end
+puts "✓ Técnico criado: #{tech2.name}"
+
+tech3 = Technician.find_or_create_by!(email: "roberto@example.com") do |tech|
+  tech.name = "Roberto Silva"
+  tech.phone = "(11) 98765-3333"
+  tech.specialty = "Software"
+  tech.notes = "Especialista em sistemas operacionais Windows e Linux. Desenvolve scripts de automação."
+  tech.active = true
+end
+puts "✓ Técnico criado: #{tech3.name}"
+
+tech4 = Technician.find_or_create_by!(email: "ana@example.com") do |tech|
+  tech.name = "Ana Paula"
+  tech.phone = "(11) 98765-4444"
+  tech.specialty = "Impressoras"
+  tech.notes = "Manutenção de impressoras HP, Epson e Brother. Certificação técnica HP."
+  tech.active = true
+end
+puts "✓ Técnico criado: #{tech4.name}"
+
+tech5 = Technician.find_or_create_by!(email: "marcos@example.com") do |tech|
+  tech.name = "Marcos Oliveira"
+  tech.phone = "(11) 98765-5555"
+  tech.specialty = "Notebooks"
+  tech.notes = "Técnico sênior em notebooks. Especialista em soldagem de componentes SMD."
+  tech.active = false
+  tech.user = nil
+end
+puts "✓ Técnico criado: #{tech5.name} (Inativo)"
+
 # Criar peças
 puts "\n🔧 Criando peças..."
 
@@ -313,9 +364,22 @@ Part.find_or_create_by!(code: "TECL001") do |part|
 end
 puts "✓ Peça criada: Teclado USB ABNT2"
 
+# Atribuir técnicos às ordens existentes
+puts "\n🔗 Atribuindo técnicos às ordens..."
+
+ServiceOrder.find_by(title: "Manutenção de Servidor")&.update(technician: tech1)
+ServiceOrder.find_by(title: "Configuração de Rede")&.update(technician: tech2)
+ServiceOrder.find_by(title: "Reparo de Impressora")&.update(technician: tech4)
+ServiceOrder.find_by(title: "Backup de Dados")&.update(technician: tech3)
+ServiceOrder.find_by(title: "Instalação de Software")&.update(technician: tech3)
+
+puts "✓ Técnicos atribuídos às ordens de serviço"
+
 # Estatísticas
 puts "\n📊 Estatísticas:"
 puts "   Total de usuários: #{User.count}"
+puts "   Total de técnicos: #{Technician.count}"
+puts "   Técnicos ativos: #{Technician.active.count}"
 puts "   Total de ordens de serviço: #{ServiceOrder.count}"
 puts "   Total de peças: #{Part.count}"
 puts "   OS Pendentes: #{ServiceOrder.pending.count}"
