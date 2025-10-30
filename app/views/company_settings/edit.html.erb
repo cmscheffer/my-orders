@@ -92,12 +92,33 @@
             <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informações da Empresa</h5>
           </div>
           <div class="card-body">
-            <div class="mb-3">
-              <%= f.label :company_name, "Nome da Empresa", class: "form-label" %>
-              <%= f.text_field :company_name, 
-                  class: "form-control", 
-                  placeholder: "Ex: Minha Empresa Tech" %>
-              <small class="form-text text-muted">Nome que aparecerá nos relatórios e PDFs</small>
+            <div class="row">
+              <div class="col-md-8">
+                <div class="mb-3">
+                  <%= f.label :company_name, "Nome da Empresa", class: "form-label" %>
+                  <%= f.text_field :company_name, 
+                      class: "form-control", 
+                      placeholder: "Ex: Minha Empresa Tech" %>
+                  <small class="form-text text-muted">Nome que aparecerá nos relatórios e PDFs</small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <%= f.label :cnpj, "CNPJ", class: "form-label" %>
+                  <%= f.text_field :cnpj, 
+                      class: "form-control cnpj-mask", 
+                      placeholder: "00.000.000/0000-00",
+                      maxlength: "18" %>
+                  <small class="form-text text-muted">
+                    <% if @company_setting.cnpj.present? %>
+                      <span class="text-success"><i class="fas fa-check-circle"></i> CNPJ válido</span>
+                    <% else %>
+                      Formato: XX.XXX.XXX/XXXX-XX
+                    <% end %>
+                  </small>
+                </div>
+              </div>
             </div>
 
             <div class="mb-3">
@@ -187,4 +208,94 @@
       }
     }
   });
+
+  // Máscara para CNPJ
+  document.addEventListener('DOMContentLoaded', function() {
+    const cnpjInput = document.querySelector('.cnpj-mask');
+    
+    if (cnpjInput) {
+      cnpjInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length > 14) {
+          value = value.substr(0, 14);
+        }
+        
+        // Aplica máscara: XX.XXX.XXX/XXXX-XX
+        if (value.length > 12) {
+          value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/, '$1.$2.$3/$4-$5');
+        } else if (value.length > 8) {
+          value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4}).*/, '$1.$2.$3/$4');
+        } else if (value.length > 5) {
+          value = value.replace(/^(\d{2})(\d{3})(\d{1,3}).*/, '$1.$2.$3');
+        } else if (value.length > 2) {
+          value = value.replace(/^(\d{2})(\d{1,3}).*/, '$1.$2');
+        }
+        
+        e.target.value = value;
+      });
+
+      // Validação em tempo real
+      cnpjInput.addEventListener('blur', function(e) {
+        const value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length > 0 && value.length !== 14) {
+          const helpText = e.target.parentElement.querySelector('small');
+          if (helpText) {
+            helpText.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle"></i> CNPJ incompleto (14 dígitos necessários)</span>';
+          }
+        } else if (value.length === 14) {
+          if (validateCNPJ(value)) {
+            const helpText = e.target.parentElement.querySelector('small');
+            if (helpText) {
+              helpText.innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> CNPJ válido</span>';
+            }
+          } else {
+            const helpText = e.target.parentElement.querySelector('small');
+            if (helpText) {
+              helpText.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle"></i> CNPJ inválido</span>';
+            }
+          }
+        }
+      });
+    }
+  });
+
+  // Função para validar CNPJ
+  function validateCNPJ(cnpj) {
+    // Remove caracteres não numéricos
+    cnpj = cnpj.replace(/\D/g, '');
+    
+    // Verifica se tem 14 dígitos
+    if (cnpj.length !== 14) return false;
+    
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1+$/.test(cnpj)) return false;
+    
+    // Valida primeiro dígito verificador
+    let sum = 0;
+    let weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(cnpj[i]) * weights[i];
+    }
+    
+    let remainder = sum % 11;
+    let firstDigit = remainder < 2 ? 0 : 11 - remainder;
+    
+    if (firstDigit !== parseInt(cnpj[12])) return false;
+    
+    // Valida segundo dígito verificador
+    sum = 0;
+    weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    
+    for (let i = 0; i < 13; i++) {
+      sum += parseInt(cnpj[i]) * weights[i];
+    }
+    
+    remainder = sum % 11;
+    let secondDigit = remainder < 2 ? 0 : 11 - remainder;
+    
+    return secondDigit === parseInt(cnpj[13]);
+  }
 </script>

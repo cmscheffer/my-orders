@@ -53,6 +53,7 @@ class CompanySettingsController < ApplicationController
   def company_setting_params
     params.require(:company_setting).permit(
       :company_name,
+      :cnpj,
       :address,
       :phone,
       :email,

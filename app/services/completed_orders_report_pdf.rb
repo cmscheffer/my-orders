@@ -51,7 +51,15 @@ class CompletedOrdersReportPdf
     # Adicionar nome da empresa se configurado
     if company_setting.company_name.present?
       @pdf.text company_setting.company_name, size: 14, align: :center, style: :bold
+      @pdf.move_down 3
+    end
+    
+    # Adicionar CNPJ se configurado
+    if company_setting.formatted_cnpj.present?
+      @pdf.text "CNPJ: #{company_setting.formatted_cnpj}", size: 11, align: :center
       @pdf.move_down 5
+    elsif company_setting.company_name.present?
+      @pdf.move_down 2
     end
     
     @pdf.text "RELATÓRIO DE ORDENS CONCLUÍDAS", size: 20, style: :bold, align: :center

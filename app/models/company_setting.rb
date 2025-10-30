@@ -2,6 +2,10 @@ class CompanySetting < ApplicationRecord
   validates :logo_filename, presence: true, if: :logo_data?
   validate :validate_logo_size, if: :logo_data?
   validate :validate_logo_format, if: :logo_filename?
+  validate :validate_cnpj, if: :cnpj?
+
+  # Normaliza CNPJ antes de salvar (remove pontuação)
+  before_save :normalize_cnpj, if: :cnpj?
 
   # Retorna a instância singleton das configurações
   def self.instance
@@ -46,7 +50,25 @@ class CompanySetting < ApplicationRecord
     save
   end
 
+  # Retorna CNPJ formatado para exibição
+  def formatted_cnpj
+    return nil unless cnpj.present?
+    
+    # Remove tudo que não for número
+    numbers = cnpj.gsub(/\D/, '')
+    
+    # Formata: XX.XXX.XXX/XXXX-XX
+    return cnpj unless numbers.length == 14
+    
+    "#{numbers[0..1]}.#{numbers[2..4]}.#{numbers[5..7]}/#{numbers[8..11]}-#{numbers[12..13]}"
+  end
+
   private
+
+  def normalize_cnpj
+    # Remove todos os caracteres não numéricos
+    self.cnpj = cnpj.gsub(/\D/, '') if cnpj.present?
+  end
 
   def validate_logo_size
     max_size = 2.megabytes
@@ -61,6 +83,54 @@ class CompanySetting < ApplicationRecord
     
     unless allowed_extensions.include?(ext)
       errors.add(:logo_filename, "deve ser PNG, JPG, GIF ou SVG")
+    end
+  end
+
+  def validate_cnpj
+    # Remove caracteres não numéricos
+    numbers = cnpj.gsub(/\D/, '')
+    
+    # Verifica se tem 14 dígitos
+    unless numbers.length == 14
+      errors.add(:cnpj, "deve conter 14 dígitos")
+      return
+    end
+    
+    # Verifica se não são todos iguais (ex: 00000000000000)
+    if numbers.chars.uniq.length == 1
+      errors.add(:cnpj, "é inválido")
+      return
+    end
+    
+    # Validação do primeiro dígito verificador
+    sum = 0
+    weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    
+    12.times do |i|
+      sum += numbers[i].to_i * weights[i]
+    end
+    
+    remainder = sum % 11
+    first_digit = remainder < 2 ? 0 : 11 - remainder
+    
+    unless first_digit == numbers[12].to_i
+      errors.add(:cnpj, "é inválido")
+      return
+    end
+    
+    # Validação do segundo dígito verificador
+    sum = 0
+    weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    
+    13.times do |i|
+      sum += numbers[i].to_i * weights[i]
+    end
+    
+    remainder = sum % 11
+    second_digit = remainder < 2 ? 0 : 11 - remainder
+    
+    unless second_digit == numbers[13].to_i
+      errors.add(:cnpj, "é inválido")
     end
   end
 end
