@@ -90,6 +90,51 @@
         </dl>
       </div>
     </div>
+
+    <% if @service_order.service_order_parts.any? %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Peças Utilizadas</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Peça</th>
+                  <th>Quantidade</th>
+                  <th>Preço Unit.</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @service_order.service_order_parts.includes(:part).each do |sop| %>
+                  <tr>
+                    <td><code><%= sop.part.code || "-" %></code></td>
+                    <td>
+                      <%= link_to sop.part.name, part_path(sop.part), target: "_blank" %>
+                      <% if sop.part.brand.present? %>
+                        <br><small class="text-muted"><%= sop.part.brand %></small>
+                      <% end %>
+                    </td>
+                    <td><%= sop.quantity %> <%= sop.part.unit %></td>
+                    <td><%= sop.formatted_unit_price %></td>
+                    <td><strong><%= sop.formatted_total_price %></strong></td>
+                  </tr>
+                <% end %>
+              </tbody>
+              <tfoot>
+                <tr class="table-light">
+                  <td colspan="4" class="text-end"><strong>Total das Peças:</strong></td>
+                  <td><strong class="text-success"><%= @service_order.formatted_parts_value %></strong></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
     
     <div class="card mb-4">
       <div class="card-header">

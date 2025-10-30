@@ -190,10 +190,134 @@ ServiceOrder.find_or_create_by!(
 end
 puts "✓ OS criada: Formatação de Computador"
 
+# Criar peças
+puts "\n🔧 Criando peças..."
+
+Part.find_or_create_by!(code: "MEM001") do |part|
+  part.name = "Memória RAM DDR4 8GB"
+  part.description = "Memória RAM DDR4 8GB 2666MHz"
+  part.brand = "Kingston"
+  part.category = "Hardware"
+  part.unit_price = 180.00
+  part.stock_quantity = 15
+  part.minimum_stock = 5
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Memória RAM DDR4 8GB"
+
+Part.find_or_create_by!(code: "SSD001") do |part|
+  part.name = "SSD 240GB"
+  part.description = "SSD SATA 240GB - Leitura: 550MB/s"
+  part.brand = "Kingston"
+  part.category = "Hardware"
+  part.unit_price = 220.00
+  part.stock_quantity = 10
+  part.minimum_stock = 3
+  part.unit = "UN"
+end
+puts "✓ Peça criada: SSD 240GB"
+
+Part.find_or_create_by!(code: "HD001") do |part|
+  part.name = "HD 1TB"
+  part.description = "HD SATA 1TB 7200RPM"
+  part.brand = "Seagate"
+  part.category = "Hardware"
+  part.unit_price = 280.00
+  part.stock_quantity = 8
+  part.minimum_stock = 3
+  part.unit = "UN"
+end
+puts "✓ Peça criada: HD 1TB"
+
+Part.find_or_create_by!(code: "FONT001") do |part|
+  part.name = "Fonte 500W"
+  part.description = "Fonte ATX 500W 80 Plus Bronze"
+  part.brand = "Corsair"
+  part.category = "Hardware"
+  part.unit_price = 320.00
+  part.stock_quantity = 6
+  part.minimum_stock = 2
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Fonte 500W"
+
+Part.find_or_create_by!(code: "PLACA001") do |part|
+  part.name = "Placa de Vídeo GTX 1650"
+  part.description = "Placa de Vídeo NVIDIA GeForce GTX 1650 4GB"
+  part.brand = "ASUS"
+  part.category = "Hardware"
+  part.unit_price = 1200.00
+  part.stock_quantity = 4
+  part.minimum_stock = 2
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Placa de Vídeo GTX 1650"
+
+Part.find_or_create_by!(code: "PROC001") do |part|
+  part.name = "Processador Intel Core i5"
+  part.description = "Processador Intel Core i5 10ª Geração"
+  part.brand = "Intel"
+  part.category = "Hardware"
+  part.unit_price = 980.00
+  part.stock_quantity = 5
+  part.minimum_stock = 2
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Processador Intel Core i5"
+
+Part.find_or_create_by!(code: "TONER001") do |part|
+  part.name = "Toner HP CF217A"
+  part.description = "Toner Original HP CF217A Preto"
+  part.brand = "HP"
+  part.category = "Consumíveis"
+  part.unit_price = 380.00
+  part.stock_quantity = 12
+  part.minimum_stock = 5
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Toner HP CF217A"
+
+Part.find_or_create_by!(code: "CABO001") do |part|
+  part.name = "Cabo de Rede Cat6 - Metro"
+  part.description = "Cabo de rede Cat6 (vendido por metro)"
+  part.brand = "Furukawa"
+  part.category = "Acessórios"
+  part.unit_price = 3.50
+  part.stock_quantity = 500
+  part.minimum_stock = 100
+  part.unit = "M"
+end
+puts "✓ Peça criada: Cabo de Rede Cat6"
+
+Part.find_or_create_by!(code: "MOUSE001") do |part|
+  part.name = "Mouse USB Óptico"
+  part.description = "Mouse USB Óptico 1000 DPI"
+  part.brand = "Logitech"
+  part.category = "Periféricos"
+  part.unit_price = 45.00
+  part.stock_quantity = 25
+  part.minimum_stock = 10
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Mouse USB Óptico"
+
+Part.find_or_create_by!(code: "TECL001") do |part|
+  part.name = "Teclado USB ABNT2"
+  part.description = "Teclado USB padrão ABNT2"
+  part.brand = "Logitech"
+  part.category = "Periféricos"
+  part.unit_price = 85.00
+  part.stock_quantity = 20
+  part.minimum_stock = 8
+  part.unit = "UN"
+end
+puts "✓ Peça criada: Teclado USB ABNT2"
+
 # Estatísticas
 puts "\n📊 Estatísticas:"
 puts "   Total de usuários: #{User.count}"
 puts "   Total de ordens de serviço: #{ServiceOrder.count}"
+puts "   Total de peças: #{Part.count}"
 puts "   OS Pendentes: #{ServiceOrder.pending.count}"
 puts "   OS Em Andamento: #{ServiceOrder.in_progress.count}"
 puts "   OS Concluídas: #{ServiceOrder.completed.count}"

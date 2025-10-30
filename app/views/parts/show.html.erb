@@ -1,0 +1,159 @@
+<div class="row mb-4">
+  <div class="col">
+    <h1 class="display-4">
+      <%= @part.name %>
+      <% if @part.active %>
+        <span class="badge bg-success">Ativa</span>
+      <% else %>
+        <span class="badge bg-secondary">Inativa</span>
+      <% end %>
+    </h1>
+    <% if @part.code.present? %>
+      <p class="lead">Código: <code><%= @part.code %></code></p>
+    <% end %>
+  </div>
+  <div class="col text-end">
+    <%= link_to "Voltar", parts_path, class: "btn btn-secondary" %>
+    <%= link_to "Editar", edit_part_path(@part), class: "btn btn-warning" %>
+    <%= button_to "Excluir", part_path(@part), 
+                  method: :delete, 
+                  data: { confirm: "Tem certeza?" },
+                  class: "btn btn-danger" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Informações da Peça</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">Nome:</dt>
+          <dd class="col-sm-9"><%= @part.name %></dd>
+          
+          <dt class="col-sm-3">Código:</dt>
+          <dd class="col-sm-9"><code><%= @part.code || "-" %></code></dd>
+          
+          <dt class="col-sm-3">Descrição:</dt>
+          <dd class="col-sm-9"><%= @part.description.present? ? simple_format(@part.description) : "-" %></dd>
+          
+          <dt class="col-sm-3">Marca:</dt>
+          <dd class="col-sm-9"><%= @part.brand || "-" %></dd>
+          
+          <dt class="col-sm-3">Categoria:</dt>
+          <dd class="col-sm-9">
+            <% if @part.category.present? %>
+              <span class="badge bg-primary"><%= @part.category %></span>
+            <% else %>
+              -
+            <% end %>
+          </dd>
+          
+          <dt class="col-sm-3">Unidade:</dt>
+          <dd class="col-sm-9"><%= @part.unit %></dd>
+          
+          <dt class="col-sm-3">Preço Unitário:</dt>
+          <dd class="col-sm-9"><h5 class="text-success mb-0"><%= @part.formatted_unit_price %></h5></dd>
+        </dl>
+      </div>
+    </div>
+
+    <% if @service_orders.any? %>
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Últimas Ordens de Serviço com Esta Peça</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Título</th>
+                  <th>Status</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @service_orders.each do |order| %>
+                  <tr>
+                    <td><%= order.id %></td>
+                    <td><%= link_to order.title, service_order_path(order) %></td>
+                    <td>
+                      <span class="badge <%= order.status_badge_class %>">
+                        <%= order.status.humanize %>
+                      </span>
+                    </td>
+                    <td><%= l(order.created_at, format: :short) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Estoque</h5>
+        <span class="badge <%= @part.stock_badge_class %>">
+          <%= @part.stock_status %>
+        </span>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-6">Quantidade:</dt>
+          <dd class="col-sm-6 text-end">
+            <h4 class="mb-0"><%= @part.stock_quantity %> <%= @part.unit %></h4>
+          </dd>
+          
+          <dt class="col-sm-6">Estoque Mínimo:</dt>
+          <dd class="col-sm-6 text-end">
+            <%= @part.minimum_stock %> <%= @part.unit %>
+          </dd>
+        </dl>
+        
+        <% if @part.stock_quantity <= @part.minimum_stock %>
+          <div class="alert alert-warning mt-3 mb-0">
+            <small><strong>⚠️ Atenção!</strong> Estoque abaixo do mínimo.</small>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Ações Rápidas</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <%= button_to "#{@part.active ? 'Desativar' : 'Ativar'} Peça", 
+                        toggle_active_part_path(@part),
+                        method: :patch,
+                        class: "btn btn-#{@part.active ? 'warning' : 'success'}",
+                        data: { confirm: "Confirmar alteração de status?" } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Informações do Sistema</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-5">Cadastrada em:</dt>
+          <dd class="col-sm-7"><small><%= l(@part.created_at, format: :long) %></small></dd>
+          
+          <dt class="col-sm-5">Atualizada em:</dt>
+          <dd class="col-sm-7"><small><%= l(@part.updated_at, format: :long) %></small></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,6 +12,13 @@ Rails.application.routes.draw do
     end
   end
   
+  # Parts routes
+  resources :parts do
+    member do
+      patch :toggle_active
+    end
+  end
+  
   # Dashboard
   get "dashboard", to: "dashboard#index"
   

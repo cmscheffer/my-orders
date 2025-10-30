@@ -1,0 +1,34 @@
+<div class="part-item border rounded p-3 mb-3">
+  <%= f.fields_for :service_order_parts, service_order_part do |part_form| %>
+    <%= part_form.hidden_field :id %>
+    <%= part_form.hidden_field :_destroy %>
+    
+    <div class="row">
+      <div class="col-md-5">
+        <label class="form-label">Peça</label>
+        <%= part_form.collection_select :part_id, 
+                                        Part.active.order(:name), 
+                                        :id, 
+                                        :full_name,
+                                        { include_blank: "Selecione uma peça" },
+                                        { class: "form-select part-select", required: true } %>
+      </div>
+      
+      <div class="col-md-2">
+        <label class="form-label">Quantidade</label>
+        <%= part_form.number_field :quantity, class: "form-control part-quantity", min: 1, required: true %>
+      </div>
+      
+      <div class="col-md-3">
+        <label class="form-label">Preço Unit. (R$)</label>
+        <%= part_form.number_field :unit_price, step: 0.01, class: "form-control part-price", min: 0, required: true %>
+      </div>
+      
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="button" class="btn btn-danger btn-sm w-100 remove-part-btn">
+          <i class="fas fa-trash"></i> Remover
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>

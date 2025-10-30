@@ -32,6 +32,21 @@ pt-BR:
         payment_method: "Forma de pagamento"
         payment_date: "Data do pagamento"
         notes: "Observações"
+      part:
+        name: "Nome da peça"
+        code: "Código"
+        description: "Descrição"
+        brand: "Marca"
+        category: "Categoria"
+        unit_price: "Preço unitário"
+        stock_quantity: "Quantidade em estoque"
+        minimum_stock: "Estoque mínimo"
+        unit: "Unidade"
+        active: "Ativa"
+      service_order_part:
+        part: "Peça"
+        quantity: "Quantidade"
+        unit_price: "Preço unitário"
     errors:
       messages:
         blank: "não pode ficar em branco"

@@ -1,5 +1,9 @@
 class ServiceOrder < ApplicationRecord
   belongs_to :user
+  has_many :service_order_parts, dependent: :destroy
+  has_many :parts, through: :service_order_parts
+
+  accepts_nested_attributes_for :service_order_parts, allow_destroy: true, reject_if: :all_blank
 
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10 }

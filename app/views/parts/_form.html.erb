@@ -1,0 +1,112 @@
+<%= form_with(model: part, local: true, class: "needs-validation") do |form| %>
+  <% if part.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading">
+        <%= pluralize(part.errors.count, "erro") %> impediram a gravação:
+      </h4>
+      <ul class="mb-0">
+        <% part.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="mb-3">
+        <%= form.label :name, "Nome da Peça *", class: "form-label" %>
+        <%= form.text_field :name, class: "form-control", placeholder: "Ex: Memória RAM DDR4 8GB", required: true %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :description, "Descrição", class: "form-label" %>
+        <%= form.text_area :description, rows: 3, class: "form-control", placeholder: "Descrição detalhada da peça..." %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :brand, "Marca", class: "form-label" %>
+            <%= form.text_field :brand, class: "form-control", placeholder: "Ex: Kingston, Samsung" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :category, "Categoria", class: "form-label" %>
+            <%= form.select :category,
+                            options_for_select([
+                              'Componentes Eletrônicos',
+                              'Hardware',
+                              'Periféricos',
+                              'Acessórios',
+                              'Consumíveis',
+                              'Ferramentas'
+                            ], part.category),
+                            { include_blank: "Selecione" },
+                            class: "form-select" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= form.label :code, "Código da Peça", class: "form-label" %>
+        <%= form.text_field :code, class: "form-control", placeholder: "Gerado automaticamente" %>
+        <small class="text-muted">Deixe em branco para gerar automaticamente</small>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :unit_price, "Preço Unitário (R$) *", class: "form-label" %>
+        <%= form.number_field :unit_price, step: 0.01, class: "form-control", placeholder: "0,00", required: true %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :unit, "Unidade", class: "form-label" %>
+        <%= form.select :unit,
+                        options_for_select(['UN', 'PC', 'CX', 'KG', 'M', 'L'], part.unit || 'UN'),
+                        {},
+                        class: "form-select" %>
+        <small class="text-muted">UN=Unidade, PC=Peça, CX=Caixa</small>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check form-switch">
+          <%= form.check_box :active, class: "form-check-input" %>
+          <%= form.label :active, "Peça Ativa", class: "form-check-label" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Controle de Estoque</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :stock_quantity, "Quantidade em Estoque", class: "form-label" %>
+            <%= form.number_field :stock_quantity, class: "form-control", placeholder: "0" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :minimum_stock, "Estoque Mínimo", class: "form-label" %>
+            <%= form.number_field :minimum_stock, class: "form-control", placeholder: "0" %>
+            <small class="text-muted">Alerta quando atingir este valor</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= link_to "Cancelar", parts_path, class: "btn btn-secondary" %>
+    <%= form.submit class: "btn btn-primary btn-lg" %>
+  </div>
+<% end %>
