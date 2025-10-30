@@ -1,0 +1,94 @@
+<div class="container mt-4">
+  <h1><i class="fas fa-chart-bar"></i> Relatórios</h1>
+  <p class="lead">Sistema de relatórios e análises de ordens de serviço</p>
+
+  <div class="row mt-4">
+    <!-- Relatório de Ordens Concluídas -->
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="fas fa-check-circle"></i> Ordens Concluídas</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            Relatório completo de ordens de serviço finalizadas com filtros por técnico e período.
+          </p>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-check text-success"></i> Filtro por técnico</li>
+            <li><i class="fas fa-check text-success"></i> Filtro por período de datas</li>
+            <li><i class="fas fa-check text-success"></i> Estatísticas financeiras</li>
+            <li><i class="fas fa-check text-success"></i> Gráficos e análises</li>
+            <li><i class="fas fa-check text-success"></i> Exportação em PDF</li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <%= link_to completed_orders_reports_path, class: "btn btn-success w-100" do %>
+            <i class="fas fa-file-alt"></i> Gerar Relatório
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mais relatórios podem ser adicionados aqui -->
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 border-secondary">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0"><i class="fas fa-clock"></i> Outros Relatórios</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text text-muted">
+            Novos relatórios em breve...
+          </p>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-hourglass-half"></i> Ordens Pendentes</li>
+            <li><i class="fas fa-tools"></i> Ordens em Andamento</li>
+            <li><i class="fas fa-user-cog"></i> Desempenho por Técnico</li>
+            <li><i class="fas fa-boxes"></i> Uso de Peças</li>
+            <li><i class="fas fa-chart-line"></i> Análise de Faturamento</li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-secondary w-100" disabled>
+            <i class="fas fa-lock"></i> Em Desenvolvimento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de estatísticas rápidas -->
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-success">
+        <div class="card-body text-center">
+          <h3 class="mb-0"><%= ServiceOrder.completed.count %></h3>
+          <p class="mb-0">Ordens Concluídas</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-info">
+        <div class="card-body text-center">
+          <h3 class="mb-0"><%= ServiceOrder.in_progress.count %></h3>
+          <p class="mb-0">Em Andamento</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning">
+        <div class="card-body text-center">
+          <h3 class="mb-0"><%= ServiceOrder.pending.count %></h3>
+          <p class="mb-0">Pendentes</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-primary">
+        <div class="card-body text-center">
+          <h3 class="mb-0"><%= Technician.active.count %></h3>
+          <p class="mb-0">Técnicos Ativos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

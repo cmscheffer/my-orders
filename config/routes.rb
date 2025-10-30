@@ -30,6 +30,13 @@ Rails.application.routes.draw do
   # Dashboard
   get "dashboard", to: "dashboard#index"
   
+  # Reports
+  resources :reports, only: [:index] do
+    collection do
+      get :completed_orders
+    end
+  end
+  
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end
