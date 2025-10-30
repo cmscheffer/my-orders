@@ -4,6 +4,70 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ---
 
+## [1.2.0] - 2024-01-15
+
+### ✨ Adicionado
+- **Campos Financeiros Completos**
+  - `service_value`: Valor do serviço/mão de obra (decimal 10,2)
+  - `parts_value`: Valor de peças/componentes (decimal 10,2)
+  - `total_value`: Valor total calculado automaticamente (service_value + parts_value)
+  - `payment_status`: Status do pagamento (enum: pending_payment, paid, partially_paid, cancelled_payment)
+  - `payment_method`: Forma de pagamento (Dinheiro, Cartão, PIX, Boleto, etc.)
+  - `payment_date`: Data do pagamento
+  - `notes`: Observações financeiras/adicionais
+
+### 🔄 Modificado
+- **Model ServiceOrder**
+  - Validações numéricas para valores (maior ou igual a 0)
+  - Enum `payment_status` com 4 estados
+  - Callback `before_save :calculate_total_value` para cálculo automático
+  - Métodos formatados: `formatted_service_value()`, `formatted_parts_value()`, `formatted_total_value()`
+  - Método `payment_status_badge_class()` para badges coloridos
+  
+- **Controller ServiceOrdersController**
+  - Adicionados 7 novos parâmetros permitidos
+  
+- **Views**
+  - Formulário `_form.html.erb`: Nova seção "Informações Financeiras" completa
+    - Campos de valor do serviço e peças
+    - Select de status do pagamento
+    - Select de forma de pagamento (7 opções)
+    - Campo de data de pagamento
+    - Campo de observações
+    - Alerta informativo sobre cálculo automático
+  - View `show.html.erb`: Card dedicado "Informações Financeiras"
+    - Exibe valores formatados em R$
+    - Mostra valor total em destaque
+    - Badge de status do pagamento
+    - Observações quando preenchidas
+  - View `index.html.erb`: Nova coluna "Valor Total"
+    - Mostra valor em R$ formatado
+    - Badge do status de pagamento (quando aplicável)
+  
+- **Database**
+  - Migration `20240101000004_add_financial_fields_to_service_orders.rb`
+    - Adiciona 7 novas colunas à tabela `service_orders`
+    - Índices nos campos `payment_status` e `total_value`
+  
+- **Seeds**
+  - Todos os 7 exemplos agora incluem valores financeiros realistas
+  - Valores entre R$ 120,00 e R$ 1.850,00
+  - Diferentes status de pagamento
+  - Formas de pagamento variadas
+  
+- **Tradução (pt-BR)**
+  - Adicionadas traduções para os 7 novos campos
+
+### 💰 Funcionalidades Financeiras
+- Cálculo automático do valor total
+- Formatação monetária em Real (R$)
+- Rastreamento completo de pagamentos
+- Status de pagamento visual (badges coloridos)
+- Suporte a pagamento parcial
+- Campo de observações para detalhes adicionais
+
+---
+
 ## [1.1.0] - 2024-01-15
 
 ### ✨ Adicionado
