@@ -15,6 +15,12 @@ class ReportsController < ApplicationController
       @selected_technician = Technician.find_by(id: params[:technician_id])
     end
 
+    # Filtro por cliente
+    if params[:customer_name].present?
+      @service_orders = @service_orders.where("customer_name LIKE ?", "%#{params[:customer_name]}%")
+      @selected_customer = params[:customer_name]
+    end
+
     # Filtro por período de conclusão
     if params[:start_date].present?
       start_date = Date.parse(params[:start_date]) rescue nil
@@ -40,7 +46,7 @@ class ReportsController < ApplicationController
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = CompletedOrdersReportPdf.new(@service_orders, @statistics, @selected_technician, @start_date, @end_date)
+        pdf = CompletedOrdersReportPdf.new(@service_orders, @statistics, @selected_technician, @selected_customer, @start_date, @end_date)
         send_data pdf.generate,
                   filename: "relatorio_ordens_concluidas_#{Date.current.strftime('%Y%m%d')}.pdf",
                   type: 'application/pdf',

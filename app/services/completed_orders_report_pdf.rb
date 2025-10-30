@@ -1,10 +1,11 @@
 class CompletedOrdersReportPdf
   include ActionView::Helpers::NumberHelper
   
-  def initialize(service_orders, statistics, technician = nil, start_date = nil, end_date = nil)
+  def initialize(service_orders, statistics, technician = nil, customer = nil, start_date = nil, end_date = nil)
     @service_orders = service_orders
     @statistics = statistics
     @technician = technician
+    @customer = customer
     @start_date = start_date
     @end_date = end_date
     @pdf = Prawn::Document.new(page_size: 'A4', margin: 40, page_layout: :landscape)
@@ -31,12 +32,13 @@ class CompletedOrdersReportPdf
   end
 
   def add_filters_info
-    if @technician || @start_date || @end_date
+    if @technician || @customer || @start_date || @end_date
       @pdf.text "FILTROS APLICADOS:", size: 12, style: :bold
       @pdf.move_down 5
 
       filters = []
       filters << "Técnico: #{@technician.name}" if @technician
+      filters << "Cliente: #{@customer}" if @customer
       filters << "Período: #{format_date(@start_date)} até #{format_date(@end_date)}" if @start_date && @end_date
       filters << "A partir de: #{format_date(@start_date)}" if @start_date && !@end_date
       filters << "Até: #{format_date(@end_date)}" if @end_date && !@start_date
