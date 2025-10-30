@@ -37,6 +37,12 @@ Rails.application.routes.draw do
     end
   end
   
+  # Company Settings
+  resource :company_settings, only: [:edit, :update] do
+    delete :remove_logo
+    get :show_logo
+  end
+  
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

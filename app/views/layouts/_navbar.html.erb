@@ -38,6 +38,9 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><%= link_to "Meu Perfil", edit_user_registration_path, class: "dropdown-item" %></li>
+            <% if current_user.admin? %>
+              <li><%= link_to "Configurações da Empresa", edit_company_settings_path, class: "dropdown-item" %></li>
+            <% end %>
             <li><hr class="dropdown-divider"></li>
             <li><%= button_to "Sair", destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
           </ul>

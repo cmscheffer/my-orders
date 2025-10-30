@@ -28,6 +28,36 @@ class ServiceOrderPdfGenerator
   end
 
   def add_header
+    # Adicionar logo se existir
+    company_setting = CompanySetting.instance
+    if company_setting.has_logo?
+      begin
+        # Criar arquivo temporário com o logo
+        temp_file = Tempfile.new(['logo', File.extname(company_setting.logo_filename)])
+        temp_file.binmode
+        temp_file.write(company_setting.logo_data)
+        temp_file.rewind
+        
+        # Adicionar imagem no PDF
+        @pdf.image temp_file.path, 
+                   fit: [120, 60],
+                   position: :center
+        @pdf.move_down 10
+        
+        temp_file.close
+        temp_file.unlink
+      rescue => e
+        # Se houver erro ao processar imagem, apenas ignora
+        Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
+      end
+    end
+    
+    # Adicionar nome da empresa se configurado
+    if company_setting.company_name.present?
+      @pdf.text company_setting.company_name, size: 12, align: :center, style: :bold
+      @pdf.move_down 5
+    end
+    
     @pdf.text "ORDEM DE SERVIÇO ##{@service_order.id}", size: 24, style: :bold, align: :center
     @pdf.move_down 5
     

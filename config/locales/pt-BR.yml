@@ -4,6 +4,7 @@ pt-BR:
       user: "Usuário"
       service_order: "Ordem de Serviço"
       technician: "Técnico"
+      company_setting: "Configuração da Empresa"
     attributes:
       user:
         name: "Nome"
@@ -57,6 +58,15 @@ pt-BR:
         notes: "Observações"
         active: "Ativo"
         user: "Usuário do Sistema"
+      company_setting:
+        company_name: "Nome da Empresa"
+        address: "Endereço"
+        phone: "Telefone"
+        email: "Email"
+        website: "Website"
+        logo: "Logo"
+        logo_filename: "Nome do arquivo"
+        logo_data: "Dados da logo"
     errors:
       messages:
         blank: "não pode ficar em branco"

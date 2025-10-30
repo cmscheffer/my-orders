@@ -24,6 +24,36 @@ class CompletedOrdersReportPdf
   private
 
   def add_header
+    # Adicionar logo se existir
+    company_setting = CompanySetting.instance
+    if company_setting.has_logo?
+      begin
+        # Criar arquivo temporário com o logo
+        temp_file = Tempfile.new(['logo', File.extname(company_setting.logo_filename)])
+        temp_file.binmode
+        temp_file.write(company_setting.logo_data)
+        temp_file.rewind
+        
+        # Adicionar imagem no PDF (landscape então pode ser maior)
+        @pdf.image temp_file.path, 
+                   fit: [150, 75],
+                   position: :center
+        @pdf.move_down 10
+        
+        temp_file.close
+        temp_file.unlink
+      rescue => e
+        # Se houver erro ao processar imagem, apenas ignora
+        Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
+      end
+    end
+    
+    # Adicionar nome da empresa se configurado
+    if company_setting.company_name.present?
+      @pdf.text company_setting.company_name, size: 14, align: :center, style: :bold
+      @pdf.move_down 5
+    end
+    
     @pdf.text "RELATÓRIO DE ORDENS CONCLUÍDAS", size: 20, style: :bold, align: :center
     @pdf.move_down 5
     @pdf.text "Gerado em #{I18n.l(Time.current, format: :long)}", size: 10, align: :center, style: :italic
