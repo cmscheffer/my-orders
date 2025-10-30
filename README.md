@@ -46,6 +46,7 @@ Sistema web completo para gerenciamento de ordens de serviço desenvolvido em **
 - **SCSS** - Estilos customizados
 - **Prawn** - Geração de PDF
 - **Prawn-Table** - Tabelas em PDF
+- **Chart.js** - Gráficos e visualizações
 
 ## 📦 Pré-requisitos
 
@@ -268,6 +269,27 @@ rails generate model ModelName
 - 📧 Fácil de enviar por email
 - 🔗 Geração com um clique (botão ou ícone)
 - 📱 Compatível com desktop, tablet e mobile
+
+### Relatórios e Análises
+- 📊 **Relatório de Ordens Concluídas** completo e interativo
+- 🔍 **Filtros avançados:**
+  - Por técnico específico
+  - Por período (data inicial e final)
+  - Combinação de múltiplos filtros
+- 📈 **Estatísticas em tempo real:**
+  - Total de ordens e receita
+  - Ticket médio
+  - Taxa de pagamento
+  - Análise financeira detalhada
+- 👨‍🔧 **Análise por técnico** (ordens concluídas por cada técnico)
+- 🔧 **Top 5 peças mais utilizadas** com quantidade e receita
+- 📊 **Gráficos visuais** (Chart.js):
+  - Status de pagamento (pizza)
+  - Evolução temporal
+- 📄 **Exportação para PDF** (formato landscape)
+- 💰 **Totalizadores** em todas as tabelas
+- 🎨 Interface responsiva e intuitiva
+- 📱 Visualização otimizada para todos os dispositivos
 
 ### Status Disponíveis
 - 🟡 **Pendente** - Ordem aguardando início
