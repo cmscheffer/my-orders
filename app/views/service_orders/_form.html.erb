@@ -116,6 +116,83 @@
     </div>
   </div>
 
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Informações Financeiras</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="mb-3">
+            <%= form.label :service_value, "Valor do Serviço (R$)", class: "form-label" %>
+            <%= form.number_field :service_value, step: 0.01, class: "form-control", placeholder: "0,00" %>
+            <small class="text-muted">Valor da mão de obra</small>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="mb-3">
+            <%= form.label :parts_value, "Valor das Peças (R$)", class: "form-label" %>
+            <%= form.number_field :parts_value, step: 0.01, class: "form-control", placeholder: "0,00" %>
+            <small class="text-muted">Valor de peças/componentes</small>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="mb-3">
+            <%= form.label :payment_status, "Status do Pagamento", class: "form-label" %>
+            <%= form.select :payment_status,
+                            options_for_select([
+                              ['Pendente', 'pending_payment'],
+                              ['Pago', 'paid'],
+                              ['Pago Parcialmente', 'partially_paid'],
+                              ['Cancelado', 'cancelled_payment']
+                            ], service_order.payment_status),
+                            { include_blank: "Selecione" },
+                            class: "form-select" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :payment_method, "Forma de Pagamento", class: "form-label" %>
+            <%= form.select :payment_method,
+                            options_for_select([
+                              'Dinheiro',
+                              'Cartão de Crédito',
+                              'Cartão de Débito',
+                              'PIX',
+                              'Transferência Bancária',
+                              'Boleto',
+                              'Cheque'
+                            ], service_order.payment_method),
+                            { include_blank: "Selecione" },
+                            class: "form-select" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :payment_date, "Data do Pagamento", class: "form-label" %>
+            <%= form.date_field :payment_date, class: "form-control" %>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="mb-3">
+            <%= form.label :notes, "Observações Financeiras", class: "form-label" %>
+            <%= form.text_area :notes, rows: 3, class: "form-control", placeholder: "Informações adicionais sobre pagamento, descontos, etc." %>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <strong><i class="fas fa-info-circle"></i> Valor Total:</strong>
+        O valor total será calculado automaticamente (Serviço + Peças)
+      </div>
+    </div>
+  </div>
+
   <div class="d-flex justify-content-between">
     <%= link_to "Cancelar", service_orders_path, class: "btn btn-secondary" %>
     <%= form.submit class: "btn btn-primary btn-lg" %>

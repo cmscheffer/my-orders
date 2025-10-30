@@ -96,7 +96,13 @@ class ServiceOrdersController < ApplicationController
       :equipment_name,
       :equipment_brand,
       :equipment_model,
-      :equipment_serial
+      :equipment_serial,
+      :service_value,
+      :parts_value,
+      :payment_status,
+      :payment_method,
+      :payment_date,
+      :notes
     )
   end
 end

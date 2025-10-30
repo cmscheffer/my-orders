@@ -91,7 +91,7 @@
       </div>
     </div>
     
-    <div class="card">
+    <div class="card mb-4">
       <div class="card-header">
         <h5 class="mb-0">Informações do Cliente</h5>
       </div>
@@ -105,6 +105,61 @@
           
           <dt class="col-sm-3">Telefone:</dt>
           <dd class="col-sm-9"><%= @service_order.customer_phone || "-" %></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Informações Financeiras</h5>
+        <% if @service_order.payment_status.present? %>
+          <span class="badge <%= @service_order.payment_status_badge_class %>">
+            <%= @service_order.payment_status.humanize %>
+          </span>
+        <% end %>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-4">Valor do Serviço:</dt>
+          <dd class="col-sm-8"><strong><%= @service_order.formatted_service_value %></strong></dd>
+          
+          <dt class="col-sm-4">Valor das Peças:</dt>
+          <dd class="col-sm-8"><strong><%= @service_order.formatted_parts_value %></strong></dd>
+          
+          <dt class="col-sm-4">Valor Total:</dt>
+          <dd class="col-sm-8">
+            <h4 class="text-primary mb-0">
+              <strong><%= @service_order.formatted_total_value %></strong>
+            </h4>
+          </dd>
+        </dl>
+
+        <hr>
+
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Status do Pagamento:</dt>
+          <dd class="col-sm-8">
+            <% if @service_order.payment_status.present? %>
+              <span class="badge <%= @service_order.payment_status_badge_class %>">
+                <%= @service_order.payment_status.humanize %>
+              </span>
+            <% else %>
+              -
+            <% end %>
+          </dd>
+          
+          <dt class="col-sm-4">Forma de Pagamento:</dt>
+          <dd class="col-sm-8"><%= @service_order.payment_method || "-" %></dd>
+          
+          <dt class="col-sm-4">Data do Pagamento:</dt>
+          <dd class="col-sm-8">
+            <%= @service_order.payment_date ? l(@service_order.payment_date, format: :long) : "-" %>
+          </dd>
+
+          <% if @service_order.notes.present? %>
+            <dt class="col-sm-4">Observações:</dt>
+            <dd class="col-sm-8"><%= simple_format(@service_order.notes) %></dd>
+          <% end %>
         </dl>
       </div>
     </div>

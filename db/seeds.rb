@@ -46,6 +46,10 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "Dell"
   os.equipment_model = "PowerEdge R740"
   os.equipment_serial = "SRV2023001"
+  os.service_value = 800.00
+  os.parts_value = 350.00
+  os.payment_status = :pending_payment
+  os.payment_method = "Transferência Bancária"
 end
 puts "✓ OS criada: Manutenção de Servidor"
 
@@ -64,6 +68,10 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "Lenovo"
   os.equipment_model = "ThinkCentre M720"
   os.equipment_serial = "PC2023045"
+  os.service_value = 250.00
+  os.parts_value = 0.00
+  os.payment_status = :pending_payment
+  os.payment_method = "PIX"
 end
 puts "✓ OS criada: Instalação de Software"
 
@@ -83,6 +91,9 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "HP"
   os.equipment_model = "LaserJet Pro M404dn"
   os.equipment_serial = "BRNB4C001234"
+  os.service_value = 120.00
+  os.parts_value = 85.00
+  os.payment_status = :pending_payment
 end
 puts "✓ OS criada: Reparo de Impressora"
 
@@ -101,6 +112,12 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "Cisco"
   os.equipment_model = "RV340"
   os.equipment_serial = "FCW2345G0T5"
+  os.service_value = 650.00
+  os.parts_value = 1200.00
+  os.payment_status = :partially_paid
+  os.payment_method = "Cartão de Crédito"
+  os.payment_date = Date.today - 2.days
+  os.notes = "Cliente pagou 50% adiantado no cartão."
 end
 puts "✓ OS criada: Configuração de Rede"
 
@@ -121,6 +138,11 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "HP"
   os.equipment_model = "ProLiant ML350 Gen10"
   os.equipment_serial = "BR45XY789012"
+  os.service_value = 450.00
+  os.parts_value = 0.00
+  os.payment_status = :paid
+  os.payment_method = "Dinheiro"
+  os.payment_date = Date.today - 1.day
 end
 puts "✓ OS criada: Backup de Dados (Concluída)"
 
@@ -139,6 +161,10 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "Dell"
   os.equipment_model = "Latitude 5420"
   os.equipment_serial = "5CD0123ABC"
+  os.service_value = 150.00
+  os.parts_value = 0.00
+  os.payment_status = :cancelled_payment
+  os.notes = "Ordem cancelada a pedido do cliente."
 end
 puts "✓ OS criada: Suporte Técnico Remoto (Cancelada)"
 
@@ -157,6 +183,10 @@ ServiceOrder.find_or_create_by!(
   os.equipment_brand = "Positivo"
   os.equipment_model = "Master D640"
   os.equipment_serial = "POS2023789"
+  os.service_value = 180.00
+  os.parts_value = 0.00
+  os.payment_status = :pending_payment
+  os.payment_method = "Boleto"
 end
 puts "✓ OS criada: Formatação de Computador"
 

@@ -6,6 +6,12 @@ class ServiceOrder < ApplicationRecord
   validates :status, presence: true
   validates :priority, presence: true
   validates :equipment_name, length: { maximum: 100 }, allow_blank: true
+  validates :service_value, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :parts_value, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :total_value, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+
+  # Callbacks
+  before_save :calculate_total_value
 
   # Enums for status and priority
   enum status: {
@@ -21,6 +27,14 @@ class ServiceOrder < ApplicationRecord
     high: 2,
     urgent: 3
   }
+
+  # Enum for payment status
+  enum payment_status: {
+    pending_payment: 0,
+    paid: 1,
+    partially_paid: 2,
+    cancelled_payment: 3
+  }, _prefix: true
 
   # Scopes
   scope :recent, -> { order(created_at: :desc) }
@@ -81,5 +95,36 @@ class ServiceOrder < ApplicationRecord
     info << equipment_brand if equipment_brand.present?
     info << equipment_model if equipment_model.present?
     info.join(" - ")
+  end
+
+  def payment_status_badge_class
+    case payment_status
+    when "pending_payment"
+      "bg-warning"
+    when "paid"
+      "bg-success"
+    when "partially_paid"
+      "bg-info"
+    when "cancelled_payment"
+      "bg-secondary"
+    end
+  end
+
+  def formatted_service_value
+    service_value.present? ? "R$ #{format('%.2f', service_value)}" : "R$ 0,00"
+  end
+
+  def formatted_parts_value
+    parts_value.present? ? "R$ #{format('%.2f', parts_value)}" : "R$ 0,00"
+  end
+
+  def formatted_total_value
+    total_value.present? ? "R$ #{format('%.2f', total_value)}" : "R$ 0,00"
+  end
+
+  private
+
+  def calculate_total_value
+    self.total_value = (service_value || 0) + (parts_value || 0)
   end
 end

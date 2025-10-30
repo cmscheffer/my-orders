@@ -25,6 +25,13 @@ pt-BR:
         equipment_brand: "Marca do equipamento"
         equipment_model: "Modelo do equipamento"
         equipment_serial: "Número de série"
+        service_value: "Valor do serviço"
+        parts_value: "Valor das peças"
+        total_value: "Valor total"
+        payment_status: "Status do pagamento"
+        payment_method: "Forma de pagamento"
+        payment_date: "Data do pagamento"
+        notes: "Observações"
     errors:
       messages:
         blank: "não pode ficar em branco"

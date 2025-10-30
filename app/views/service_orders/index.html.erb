@@ -46,6 +46,7 @@
               <th>Título</th>
               <th>Equipamento</th>
               <th>Cliente</th>
+              <th>Valor Total</th>
               <th>Status</th>
               <th>Prioridade</th>
               <th>Data de Vencimento</th>
@@ -71,6 +72,17 @@
                   <% end %>
                 </td>
                 <td><%= order.customer_name || "-" %></td>
+                <td>
+                  <strong class="text-success"><%= order.formatted_total_value %></strong>
+                  <% if order.payment_status.present? && order.payment_status != 'pending_payment' %>
+                    <br>
+                    <small>
+                      <span class="badge <%= order.payment_status_badge_class %> badge-sm">
+                        <%= order.payment_status.humanize %>
+                      </span>
+                    </small>
+                  <% end %>
+                </td>
                 <td>
                   <span class="badge <%= order.status_badge_class %>">
                     <%= order.status.humanize %>
