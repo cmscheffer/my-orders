@@ -1,0 +1,104 @@
+<div class="row mb-4">
+  <div class="col">
+    <h1 class="display-4">Ordens de Serviço</h1>
+  </div>
+  <div class="col text-end">
+    <%= link_to "Nova Ordem de Serviço", new_service_order_path, class: "btn btn-primary btn-lg" %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Filtros</h5>
+    <%= form_with url: service_orders_path, method: :get, local: true, class: "row g-3" do |f| %>
+      <div class="col-md-4">
+        <%= f.label :status, "Status", class: "form-label" %>
+        <%= f.select :status, 
+                     options_for_select(ServiceOrder.statuses.keys.map { |s| [s.humanize, s] }, params[:status]),
+                     { include_blank: "Todos" },
+                     class: "form-select" %>
+      </div>
+      
+      <div class="col-md-4">
+        <%= f.label :priority, "Prioridade", class: "form-label" %>
+        <%= f.select :priority,
+                     options_for_select(ServiceOrder.priorities.keys.map { |p| [p.humanize, p] }, params[:priority]),
+                     { include_blank: "Todas" },
+                     class: "form-select" %>
+      </div>
+      
+      <div class="col-md-4 d-flex align-items-end">
+        <%= f.submit "Filtrar", class: "btn btn-primary me-2" %>
+        <%= link_to "Limpar", service_orders_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <% if @service_orders.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Título</th>
+              <th>Cliente</th>
+              <th>Status</th>
+              <th>Prioridade</th>
+              <th>Data de Vencimento</th>
+              <th>Criado em</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @service_orders.each do |order| %>
+              <tr class="<%= 'table-danger' if order.overdue? %>">
+                <td><%= order.id %></td>
+                <td>
+                  <%= link_to order.title, service_order_path(order) %>
+                  <% if order.overdue? %>
+                    <span class="badge bg-danger ms-2">Atrasada</span>
+                  <% end %>
+                </td>
+                <td><%= order.customer_name || "-" %></td>
+                <td>
+                  <span class="badge <%= order.status_badge_class %>">
+                    <%= order.status.humanize %>
+                  </span>
+                </td>
+                <td>
+                  <span class="badge <%= order.priority_badge_class %>">
+                    <%= order.priority.humanize %>
+                  </span>
+                </td>
+                <td>
+                  <%= order.due_date ? l(order.due_date, format: :long) : "-" %>
+                </td>
+                <td><%= l(order.created_at, format: :short) %></td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <%= link_to "Ver", service_order_path(order), class: "btn btn-info" %>
+                    <% if current_user.admin? || order.user == current_user %>
+                      <%= link_to "Editar", edit_service_order_path(order), class: "btn btn-warning" %>
+                      <%= button_to "Excluir", service_order_path(order), 
+                                    method: :delete, 
+                                    data: { confirm: "Tem certeza?" },
+                                    class: "btn btn-danger" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-muted text-center py-4">
+        Nenhuma ordem de serviço encontrada.
+        <%= link_to "Criar a primeira", new_service_order_path, class: "btn btn-primary" %>
+      </p>
+    <% end %>
+  </div>
+</div>

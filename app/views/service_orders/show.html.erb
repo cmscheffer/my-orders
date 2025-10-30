@@ -1,0 +1,144 @@
+<div class="row mb-4">
+  <div class="col">
+    <h1 class="display-4">Ordem de Serviço #<%= @service_order.id %></h1>
+  </div>
+  <div class="col text-end">
+    <%= link_to "Voltar", service_orders_path, class: "btn btn-secondary" %>
+    <% if current_user.admin? || @service_order.user == current_user %>
+      <%= link_to "Editar", edit_service_order_path(@service_order), class: "btn btn-warning" %>
+      <%= button_to "Excluir", service_order_path(@service_order), 
+                    method: :delete, 
+                    data: { confirm: "Tem certeza?" },
+                    class: "btn btn-danger" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Detalhes da Ordem de Serviço</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">Título:</dt>
+          <dd class="col-sm-9"><%= @service_order.title %></dd>
+          
+          <dt class="col-sm-3">Descrição:</dt>
+          <dd class="col-sm-9"><%= simple_format(@service_order.description) %></dd>
+          
+          <dt class="col-sm-3">Status:</dt>
+          <dd class="col-sm-9">
+            <span class="badge <%= @service_order.status_badge_class %>">
+              <%= @service_order.status.humanize %>
+            </span>
+          </dd>
+          
+          <dt class="col-sm-3">Prioridade:</dt>
+          <dd class="col-sm-9">
+            <span class="badge <%= @service_order.priority_badge_class %>">
+              <%= @service_order.priority.humanize %>
+            </span>
+          </dd>
+          
+          <dt class="col-sm-3">Data de Vencimento:</dt>
+          <dd class="col-sm-9">
+            <%= @service_order.due_date ? l(@service_order.due_date, format: :long) : "-" %>
+            <% if @service_order.overdue? %>
+              <span class="badge bg-danger ms-2">Atrasada</span>
+            <% end %>
+          </dd>
+          
+          <dt class="col-sm-3">Criado em:</dt>
+          <dd class="col-sm-9"><%= l(@service_order.created_at, format: :long) %></dd>
+          
+          <% if @service_order.completed? %>
+            <dt class="col-sm-3">Concluído em:</dt>
+            <dd class="col-sm-9"><%= l(@service_order.completed_at, format: :long) %></dd>
+          <% end %>
+          
+          <dt class="col-sm-3">Responsável:</dt>
+          <dd class="col-sm-9"><%= @service_order.user.name %></dd>
+        </dl>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Informações do Cliente</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">Nome:</dt>
+          <dd class="col-sm-9"><%= @service_order.customer_name || "-" %></dd>
+          
+          <dt class="col-sm-3">Email:</dt>
+          <dd class="col-sm-9"><%= @service_order.customer_email || "-" %></dd>
+          
+          <dt class="col-sm-3">Telefone:</dt>
+          <dd class="col-sm-9"><%= @service_order.customer_phone || "-" %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Ações Rápidas</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <% if @service_order.can_be_completed? %>
+            <%= button_to "✓ Marcar como Concluída", 
+                          complete_service_order_path(@service_order),
+                          method: :patch,
+                          class: "btn btn-success",
+                          data: { confirm: "Confirmar conclusão da OS?" } %>
+          <% end %>
+          
+          <% if @service_order.can_be_cancelled? %>
+            <%= button_to "✗ Cancelar OS", 
+                          cancel_service_order_path(@service_order),
+                          method: :patch,
+                          class: "btn btn-warning",
+                          data: { confirm: "Confirmar cancelamento da OS?" } %>
+          <% end %>
+          
+          <% if @service_order.in_progress? %>
+            <button class="btn btn-info" disabled>✓ Em Andamento</button>
+          <% end %>
+          
+          <% if @service_order.completed? %>
+            <button class="btn btn-success" disabled>✓ Concluída</button>
+          <% end %>
+          
+          <% if @service_order.cancelled? %>
+            <button class="btn btn-secondary" disabled>✗ Cancelada</button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Histórico</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <small class="text-muted">
+              Criada em <%= l(@service_order.created_at, format: :short) %>
+            </small>
+          </li>
+          <li class="mb-2">
+            <small class="text-muted">
+              Última atualização em <%= l(@service_order.updated_at, format: :short) %>
+            </small>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
