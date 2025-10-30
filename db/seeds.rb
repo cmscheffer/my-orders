@@ -42,6 +42,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "Empresa Tech Solutions"
   os.customer_email = "contato@techsolutions.com"
   os.customer_phone = "(11) 98765-4321"
+  os.equipment_name = "Servidor"
+  os.equipment_brand = "Dell"
+  os.equipment_model = "PowerEdge R740"
+  os.equipment_serial = "SRV2023001"
 end
 puts "✓ OS criada: Manutenção de Servidor"
 
@@ -56,6 +60,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "Comercial ABC"
   os.customer_email = "ti@comercialabc.com"
   os.customer_phone = "(11) 93456-7890"
+  os.equipment_name = "Desktop"
+  os.equipment_brand = "Lenovo"
+  os.equipment_model = "ThinkCentre M720"
+  os.equipment_serial = "PC2023045"
 end
 puts "✓ OS criada: Instalação de Software"
 
@@ -71,6 +79,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "Escritório Advocacia Silva"
   os.customer_email = "admin@silvadvocacia.com"
   os.customer_phone = "(11) 94567-8901"
+  os.equipment_name = "Impressora"
+  os.equipment_brand = "HP"
+  os.equipment_model = "LaserJet Pro M404dn"
+  os.equipment_serial = "BRNB4C001234"
 end
 puts "✓ OS criada: Reparo de Impressora"
 
@@ -85,6 +97,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "Indústria Metalúrgica XYZ"
   os.customer_email = "ti@metalurgicaxyz.com"
   os.customer_phone = "(11) 95678-9012"
+  os.equipment_name = "Roteador"
+  os.equipment_brand = "Cisco"
+  os.equipment_model = "RV340"
+  os.equipment_serial = "FCW2345G0T5"
 end
 puts "✓ OS criada: Configuração de Rede"
 
@@ -101,6 +117,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "Clínica Médica Saúde+"
   os.customer_email = "ti@saudemais.com"
   os.customer_phone = "(11) 96789-0123"
+  os.equipment_name = "Servidor de Arquivos"
+  os.equipment_brand = "HP"
+  os.equipment_model = "ProLiant ML350 Gen10"
+  os.equipment_serial = "BR45XY789012"
 end
 puts "✓ OS criada: Backup de Dados (Concluída)"
 
@@ -115,6 +135,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "Consultoria Empresarial ABC"
   os.customer_email = "suporte@consultoriaabc.com"
   os.customer_phone = "(11) 97890-1234"
+  os.equipment_name = "Notebook"
+  os.equipment_brand = "Dell"
+  os.equipment_model = "Latitude 5420"
+  os.equipment_serial = "5CD0123ABC"
 end
 puts "✓ OS criada: Suporte Técnico Remoto (Cancelada)"
 
@@ -129,6 +153,10 @@ ServiceOrder.find_or_create_by!(
   os.customer_name = "José Carlos Oliveira"
   os.customer_email = "jc.oliveira@email.com"
   os.customer_phone = "(11) 98901-2345"
+  os.equipment_name = "Computador Desktop"
+  os.equipment_brand = "Positivo"
+  os.equipment_model = "Master D640"
+  os.equipment_serial = "POS2023789"
 end
 puts "✓ OS criada: Formatação de Computador"
 

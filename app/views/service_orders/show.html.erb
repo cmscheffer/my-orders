@@ -64,6 +64,33 @@
       </div>
     </div>
     
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Informações do Equipamento</h5>
+      </div>
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">Equipamento:</dt>
+          <dd class="col-sm-9"><%= @service_order.equipment_name || "-" %></dd>
+          
+          <dt class="col-sm-3">Marca:</dt>
+          <dd class="col-sm-9"><%= @service_order.equipment_brand || "-" %></dd>
+          
+          <dt class="col-sm-3">Modelo:</dt>
+          <dd class="col-sm-9"><%= @service_order.equipment_model || "-" %></dd>
+          
+          <dt class="col-sm-3">Número de Série:</dt>
+          <dd class="col-sm-9">
+            <% if @service_order.equipment_serial.present? %>
+              <code><%= @service_order.equipment_serial %></code>
+            <% else %>
+              -
+            <% end %>
+          </dd>
+        </dl>
+      </div>
+    </div>
+    
     <div class="card">
       <div class="card-header">
         <h5 class="mb-0">Informações do Cliente</h5>

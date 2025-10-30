@@ -92,7 +92,11 @@ class ServiceOrdersController < ApplicationController
       :due_date,
       :customer_name,
       :customer_email,
-      :customer_phone
+      :customer_phone,
+      :equipment_name,
+      :equipment_brand,
+      :equipment_model,
+      :equipment_serial
     )
   end
 end

@@ -44,6 +44,7 @@
             <tr>
               <th>#</th>
               <th>Título</th>
+              <th>Equipamento</th>
               <th>Cliente</th>
               <th>Status</th>
               <th>Prioridade</th>
@@ -60,6 +61,13 @@
                   <%= link_to order.title, service_order_path(order) %>
                   <% if order.overdue? %>
                     <span class="badge bg-danger ms-2">Atrasada</span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if order.equipment_name.present? %>
+                    <small class="text-muted"><%= order.equipment_info %></small>
+                  <% else %>
+                    -
                   <% end %>
                 </td>
                 <td><%= order.customer_name || "-" %></td>

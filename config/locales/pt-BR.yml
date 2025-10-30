@@ -21,6 +21,10 @@ pt-BR:
         customer_email: "Email do cliente"
         customer_phone: "Telefone do cliente"
         completed_at: "Concluído em"
+        equipment_name: "Nome do equipamento"
+        equipment_brand: "Marca do equipamento"
+        equipment_model: "Modelo do equipamento"
+        equipment_serial: "Número de série"
     errors:
       messages:
         blank: "não pode ficar em branco"

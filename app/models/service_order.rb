@@ -5,6 +5,7 @@ class ServiceOrder < ApplicationRecord
   validates :description, presence: true, length: { minimum: 10 }
   validates :status, presence: true
   validates :priority, presence: true
+  validates :equipment_name, length: { maximum: 100 }, allow_blank: true
 
   # Enums for status and priority
   enum status: {
@@ -71,5 +72,14 @@ class ServiceOrder < ApplicationRecord
     when "urgent"
       "bg-danger"
     end
+  end
+
+  def equipment_info
+    return "Sem equipamento cadastrado" if equipment_name.blank?
+    
+    info = [equipment_name]
+    info << equipment_brand if equipment_brand.present?
+    info << equipment_model if equipment_model.present?
+    info.join(" - ")
   end
 end

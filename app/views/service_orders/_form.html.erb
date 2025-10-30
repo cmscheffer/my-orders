@@ -51,6 +51,43 @@
 
   <div class="card mb-4">
     <div class="card-header">
+      <h5 class="mb-0">Informações do Equipamento</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :equipment_name, "Nome/Tipo do Equipamento", class: "form-label" %>
+            <%= form.text_field :equipment_name, class: "form-control", placeholder: "Ex: Notebook, Impressora, Servidor" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :equipment_brand, "Marca", class: "form-label" %>
+            <%= form.text_field :equipment_brand, class: "form-control", placeholder: "Ex: HP, Dell, Lenovo" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :equipment_model, "Modelo", class: "form-label" %>
+            <%= form.text_field :equipment_model, class: "form-control", placeholder: "Ex: Latitude 5420, LaserJet Pro" %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :equipment_serial, "Número de Série", class: "form-label" %>
+            <%= form.text_field :equipment_serial, class: "form-control", placeholder: "Ex: SN123456789" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
       <h5 class="mb-0">Informações do Cliente</h5>
     </div>
     <div class="card-body">
