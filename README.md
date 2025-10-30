@@ -22,8 +22,12 @@ Sistema web completo para gerenciamento de ordens de serviço desenvolvido em **
 - ✅ **Autenticação completa** com Devise (login, registro, recuperação de senha)
 - ✅ **Sistema de permissões** (usuário comum e administrador)
 - ✅ **CRUD completo** de ordens de serviço
+- ✅ **Cadastro de técnicos** com especialidades e vincular a ordens
+- ✅ **Catálogo de peças** para seleção em ordens de serviço
+- ✅ **Gestão financeira** com valores de serviço, peças e totais
+- ✅ **Informações de equipamento** (nome, marca, modelo, número de série)
 - ✅ **Dashboard** com estatísticas e métricas
-- ✅ **Filtros avançados** por status e prioridade
+- ✅ **Filtros avançados** por status, prioridade, técnico
 - ✅ **Gestão de status** (Pendente, Em Andamento, Concluída, Cancelada)
 - ✅ **Níveis de prioridade** (Baixa, Média, Alta, Urgente)
 - ✅ **Alertas de atraso** para ordens vencidas
@@ -220,6 +224,34 @@ rails generate model ModelName
 - 🔍 Filtrar por prioridade
 - 📅 Data de vencimento
 - 👤 Informações do cliente
+- 🖥️ Dados do equipamento (nome, marca, modelo, número de série)
+- 👨‍🔧 Atribuição de técnico responsável
+- 🔧 Seleção de peças utilizadas
+- 💰 Gestão financeira (valor do serviço, peças, desconto, total)
+- 💳 Status e método de pagamento
+
+### Cadastro de Técnicos
+- ➕ Adicionar novos técnicos
+- ✏️ Editar informações do técnico
+- 👁️ Ver detalhes e estatísticas
+- 🔄 Ativar/desativar técnico
+- 🔍 Filtrar por especialidade
+- 🔍 Buscar por nome/email
+- 📊 Ver ordens de serviço do técnico
+- 🎓 13 especialidades disponíveis (Hardware, Software, Redes, etc.)
+- 👤 Vincular técnico a usuário do sistema (opcional)
+
+### Catálogo de Peças
+- ➕ Cadastrar novas peças
+- ✏️ Editar informações da peça
+- 🗑️ Excluir peças não utilizadas
+- 🔄 Ativar/desativar peças
+- 📦 Controle de estoque (quantidade e mínimo)
+- 💰 Preço unitário
+- 🏷️ Categorização (Hardware, Periféricos, Consumíveis, etc.)
+- 🔍 Filtros por categoria e status
+- ⚠️ Alertas de estoque baixo
+- 🔢 Código automático gerado
 
 ### Status Disponíveis
 - 🟡 **Pendente** - Ordem aguardando início
@@ -256,10 +288,15 @@ service_orders_app/
 │   ├── controllers/
 │   │   ├── application_controller.rb
 │   │   ├── dashboard_controller.rb
-│   │   └── service_orders_controller.rb
+│   │   ├── service_orders_controller.rb
+│   │   ├── parts_controller.rb
+│   │   └── technicians_controller.rb
 │   ├── models/
 │   │   ├── user.rb
-│   │   └── service_order.rb
+│   │   ├── service_order.rb
+│   │   ├── service_order_part.rb
+│   │   ├── part.rb
+│   │   └── technician.rb
 │   ├── views/
 │   │   ├── layouts/
 │   │   │   ├── application.html.erb
@@ -270,9 +307,16 @@ service_orders_app/
 │   │   ├── service_orders/
 │   │   │   ├── index.html.erb
 │   │   │   ├── show.html.erb
-│   │   │   ├── new.html.erb
-│   │   │   ├── edit.html.erb
+│   │   │   ├── _form.html.erb
+│   │   │   └── _parts_fields.html.erb
+│   │   ├── parts/
+│   │   │   ├── index.html.erb
+│   │   │   ├── show.html.erb
 │   │   │   └── _form.html.erb
+│   │   └── technicians/
+│   │       ├── index.html.erb
+│   │       ├── show.html.erb
+│   │       └── _form.html.erb
 │   │   └── devise/
 │   │       ├── sessions/
 │   │       └── registrations/
@@ -290,7 +334,13 @@ service_orders_app/
 ├── db/
 │   ├── migrate/
 │   │   ├── 20240101000001_devise_create_users.rb
-│   │   └── 20240101000002_create_service_orders.rb
+│   │   ├── 20240101000002_create_service_orders.rb
+│   │   ├── 20240101000003_add_equipment_to_service_orders.rb
+│   │   ├── 20240101000004_add_financial_fields_to_service_orders.rb
+│   │   ├── 20240101000005_create_parts.rb
+│   │   ├── 20240101000006_create_service_order_parts.rb
+│   │   ├── 20240101000007_create_technicians.rb
+│   │   └── 20240101000008_add_technician_to_service_orders.rb
 │   └── seeds.rb
 ├── Gemfile
 ├── Gemfile.lock
@@ -395,6 +445,19 @@ Após executar `rails db:seed`, as seguintes contas estarão disponíveis:
 **Usuários:**
 - Email: `joao@example.com` | Senha: `123456`
 - Email: `maria@example.com` | Senha: `123456`
+
+**Técnicos cadastrados:**
+- Carlos Alberto (Hardware) - vinculado a joao@example.com
+- Fernanda Costa (Redes) - vinculada a maria@example.com
+- Roberto Silva (Software)
+- Ana Paula (Impressoras)
+- Marcos Oliveira (Notebooks) - Inativo
+
+**Peças cadastradas:**
+- 10 peças de exemplo (Memória RAM, SSD, HD, etc.)
+
+**Ordens de Serviço:**
+- 7 ordens de exemplo com diferentes status e técnicos atribuídos
 
 ⚠️ **IMPORTANTE:** Altere estas senhas em produção!
 
