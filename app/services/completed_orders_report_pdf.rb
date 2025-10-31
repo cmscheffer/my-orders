@@ -24,49 +24,66 @@ class CompletedOrdersReportPdf
   private
 
   def add_header
-    # Adicionar logo se existir
     company_setting = CompanySetting.instance
-    if company_setting.has_logo?
-      begin
-        # Criar arquivo temporário com o logo
-        temp_file = Tempfile.new(['logo', File.extname(company_setting.logo_filename)])
-        temp_file.binmode
-        temp_file.write(company_setting.logo_data)
-        temp_file.rewind
+    header_height = 70
+    
+    # Layout com logo/empresa à esquerda e título ao centro (landscape = mais espaço)
+    @pdf.bounding_box([0, @pdf.cursor], width: @pdf.bounds.width, height: header_height) do
+      
+      # Coluna esquerda: Logo e dados da empresa
+      @pdf.bounding_box([0, @pdf.cursor], width: 280, height: header_height) do
         
-        # Adicionar imagem no PDF (landscape então pode ser maior)
-        @pdf.image temp_file.path, 
-                   fit: [150, 75],
-                   position: :center
-        @pdf.move_down 10
+        # Adicionar logo se existir
+        if company_setting.has_logo?
+          begin
+            ext = File.extname(company_setting.logo_filename).downcase
+            
+            if ext != '.svg'
+              temp_file = Tempfile.new(['logo', ext])
+              temp_file.binmode
+              temp_file.write(company_setting.logo_data)
+              temp_file.rewind
+              
+              # Logo no canto superior esquerdo (landscape = pode ser maior)
+              @pdf.image temp_file.path, 
+                         fit: [100, 50],
+                         position: :left
+              @pdf.move_down 5
+              
+              temp_file.close
+              temp_file.unlink
+            end
+          rescue => e
+            Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
+          end
+        end
         
-        temp_file.close
-        temp_file.unlink
-      rescue => e
-        # Se houver erro ao processar imagem, apenas ignora
-        Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
+        # Nome da empresa abaixo do logo
+        if company_setting.company_name.present?
+          @pdf.text company_setting.company_name, size: 12, style: :bold, align: :left
+        end
+        
+        # CNPJ
+        if company_setting.formatted_cnpj.present?
+          @pdf.text "CNPJ: #{company_setting.formatted_cnpj}", size: 10, align: :left
+        end
       end
+      
+      # Coluna central/direita: Título do relatório
+      @pdf.bounding_box([290, @pdf.cursor + header_height], width: @pdf.bounds.width - 290, height: header_height) do
+        @pdf.move_down 10
+        @pdf.text "RELATÓRIO DE ORDENS CONCLUÍDAS", size: 20, style: :bold, align: :center
+        @pdf.move_down 5
+        @pdf.text "Gerado em #{I18n.l(Time.current, format: :long)}", size: 10, align: :center, style: :italic
+      end
+      
     end
     
-    # Adicionar nome da empresa se configurado
-    if company_setting.company_name.present?
-      @pdf.text company_setting.company_name, size: 14, align: :center, style: :bold
-      @pdf.move_down 3
-    end
+    @pdf.move_down 10
     
-    # Adicionar CNPJ se configurado
-    if company_setting.formatted_cnpj.present?
-      @pdf.text "CNPJ: #{company_setting.formatted_cnpj}", size: 11, align: :center
-      @pdf.move_down 5
-    elsif company_setting.company_name.present?
-      @pdf.move_down 2
-    end
-    
-    @pdf.text "RELATÓRIO DE ORDENS CONCLUÍDAS", size: 20, style: :bold, align: :center
-    @pdf.move_down 5
-    @pdf.text "Gerado em #{I18n.l(Time.current, format: :long)}", size: 10, align: :center, style: :italic
+    # Linha horizontal separadora
     @pdf.stroke_horizontal_rule
-    @pdf.move_down 20
+    @pdf.move_down 15
   end
 
   def add_filters_info

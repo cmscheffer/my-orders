@@ -28,60 +28,63 @@ class ServiceOrderPdfGenerator
   end
 
   def add_header
-    # Adicionar logo se existir
     company_setting = CompanySetting.instance
-    if company_setting.has_logo?
-      begin
-        # Verificar se é SVG (Prawn não suporta SVG nativamente)
-        ext = File.extname(company_setting.logo_filename).downcase
+    header_height = 70
+    
+    # Layout com logo/empresa à esquerda e título ao centro
+    @pdf.bounding_box([0, @pdf.cursor], width: @pdf.bounds.width, height: header_height) do
+      
+      # Coluna esquerda: Logo e dados da empresa
+      @pdf.bounding_box([0, @pdf.cursor], width: 250, height: header_height) do
         
-        if ext == '.svg'
-          # Para SVG, apenas mostrar texto em vez do logo
-          Rails.logger.warn "Logo em formato SVG não é suportado em PDF. Use PNG ou JPG."
-        else
-          # Criar arquivo temporário com o logo
-          temp_file = Tempfile.new(['logo', ext])
-          temp_file.binmode
-          temp_file.write(company_setting.logo_data)
-          temp_file.rewind
-          
-          # Adicionar imagem no PDF com dimensões otimizadas
-          @pdf.image temp_file.path, 
-                     fit: [120, 60],
-                     position: :center,
-                     vposition: :top
-          @pdf.move_down 10
-          
-          temp_file.close
-          temp_file.unlink
+        # Adicionar logo se existir
+        if company_setting.has_logo?
+          begin
+            ext = File.extname(company_setting.logo_filename).downcase
+            
+            if ext != '.svg'
+              temp_file = Tempfile.new(['logo', ext])
+              temp_file.binmode
+              temp_file.write(company_setting.logo_data)
+              temp_file.rewind
+              
+              # Logo no canto superior esquerdo
+              @pdf.image temp_file.path, 
+                         fit: [80, 40],
+                         position: :left
+              @pdf.move_down 5
+              
+              temp_file.close
+              temp_file.unlink
+            end
+          rescue => e
+            Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
+          end
         end
-      rescue => e
-        # Se houver erro ao processar imagem, loga erro detalhado mas continua
-        Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        # Adiciona mensagem no PDF para debug
-        # @pdf.text "[Logo não pode ser carregada]", size: 8, align: :center, style: :italic
+        
+        # Nome da empresa abaixo do logo
+        if company_setting.company_name.present?
+          @pdf.text company_setting.company_name, size: 11, style: :bold, align: :left
+        end
+        
+        # CNPJ
+        if company_setting.formatted_cnpj.present?
+          @pdf.text "CNPJ: #{company_setting.formatted_cnpj}", size: 9, align: :left
+        end
       end
+      
+      # Coluna central/direita: Título do documento
+      @pdf.bounding_box([260, @pdf.cursor + header_height], width: @pdf.bounds.width - 260, height: header_height) do
+        @pdf.move_down 15
+        @pdf.text "ORDEM DE SERVIÇO", size: 18, style: :bold, align: :center
+        @pdf.text "##{@service_order.id}", size: 16, style: :bold, align: :center, color: '0066CC'
+      end
+      
     end
     
-    # Adicionar nome da empresa se configurado
-    if company_setting.company_name.present?
-      @pdf.text company_setting.company_name, size: 12, align: :center, style: :bold
-      @pdf.move_down 3
-    end
+    @pdf.move_down 10
     
-    # Adicionar CNPJ se configurado
-    if company_setting.formatted_cnpj.present?
-      @pdf.text "CNPJ: #{company_setting.formatted_cnpj}", size: 10, align: :center
-      @pdf.move_down 5
-    elsif company_setting.company_name.present?
-      @pdf.move_down 2
-    end
-    
-    @pdf.text "ORDEM DE SERVIÇO ##{@service_order.id}", size: 18, style: :bold, align: :center
-    @pdf.move_down 3
-    
-    # Linha horizontal
+    # Linha horizontal separadora
     @pdf.stroke_horizontal_rule
     @pdf.move_down 10
   end
