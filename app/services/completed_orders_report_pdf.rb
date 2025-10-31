@@ -184,13 +184,13 @@ class CompletedOrdersReportPdf
       width: @pdf.bounds.width,
       header: true,
       cell_style: {
-        padding: [4, 6],
+        padding: [3, 4],
         borders: [:bottom],
         border_width: 0.5,
         border_color: 'CCCCCC',
         size: 9
       },
-      column_widths: [30, 140, 110, 90, 75, 75, 75]
+      column_widths: [25, 130, 100, 85, 70, 70, 70]
     ) do
       row(0).font_style = :bold
       row(0).background_color = 'E0E0E0'
