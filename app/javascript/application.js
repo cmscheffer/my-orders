@@ -2,14 +2,20 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 
-// Import jQuery and Bootstrap
+// Import jQuery
 import jquery from "jquery"
 window.jQuery = jquery
 window.$ = jquery
 
-import "bootstrap"
+// Import Popper.js (required for Bootstrap dropdowns)
+import * as Popper from "@popperjs/core"
+window.Popper = Popper
 
-// Initialize Bootstrap tooltips and popovers
+// Import Bootstrap - usando a versão bundle que já inclui Popper
+import * as bootstrap from "bootstrap"
+window.bootstrap = bootstrap
+
+// Initialize Bootstrap components on Turbo load
 document.addEventListener("turbo:load", () => {
   // Initialize tooltips
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
