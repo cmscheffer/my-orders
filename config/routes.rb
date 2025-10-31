@@ -37,6 +37,9 @@ Rails.application.routes.draw do
     end
   end
   
+  # Users routes
+  resources :users
+  
   # Company Settings
   resource :company_settings, only: [:edit, :update] do
     delete :remove_logo

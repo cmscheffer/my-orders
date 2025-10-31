@@ -26,6 +26,17 @@
         <li class="nav-item">
           <%= link_to "Relatórios", reports_path, class: "nav-link" %>
         </li>
+        <% if current_user.admin? %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-cog"></i> Configurações
+            </a>
+            <ul class="dropdown-menu">
+              <li><%= link_to raw('<i class="fas fa-users"></i> Usuários'), users_path, class: "dropdown-item" %></li>
+              <li><%= link_to raw('<i class="fas fa-building"></i> Dados da Empresa'), edit_company_settings_path, class: "dropdown-item" %></li>
+            </ul>
+          </li>
+        <% end %>
       </ul>
       
       <ul class="navbar-nav">
@@ -37,12 +48,10 @@
             <% end %>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><%= link_to "Meu Perfil", edit_user_registration_path, class: "dropdown-item" %></li>
-            <% if current_user.admin? %>
-              <li><%= link_to "Configurações da Empresa", edit_company_settings_path, class: "dropdown-item" %></li>
-            <% end %>
+            <li><%= link_to raw('<i class="fas fa-user"></i> Meu Perfil'), user_path(current_user), class: "dropdown-item" %></li>
+            <li><%= link_to raw('<i class="fas fa-key"></i> Alterar Senha'), edit_user_registration_path, class: "dropdown-item" %></li>
             <li><hr class="dropdown-divider"></li>
-            <li><%= button_to "Sair", destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
+            <li><%= button_to raw('<i class="fas fa-sign-out-alt"></i> Sair'), destroy_user_session_path, method: :delete, class: "dropdown-item text-danger" %></li>
           </ul>
         </li>
       </ul>
