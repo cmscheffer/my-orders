@@ -1,51 +1,54 @@
-// Dropdowns initialization for Bootstrap 5
-console.log("🚀 dropdowns.js carregado!");
+// Bootstrap 5 Dropdowns Initialization
+// This file manually initializes Bootstrap dropdowns to ensure compatibility with Turbo
 
-// Initialize Bootstrap dropdowns
-function initializeDropdowns() {
-  console.log("🔄 Inicializando dropdowns...");
+(function() {
+  'use strict';
   
-  // Check if Bootstrap is loaded
-  if (typeof bootstrap === 'undefined') {
-    console.error("❌ Bootstrap não está carregado!");
-    return;
+  // Initialize Bootstrap dropdowns
+  function initializeDropdowns() {
+    // Verify Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+      console.error('Bootstrap não está carregado. Dropdowns não funcionarão.');
+      return;
+    }
+    
+    // Find all dropdown toggles
+    const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+    
+    if (dropdownElements.length === 0) {
+      return; // No dropdowns on this page
+    }
+    
+    // Initialize each dropdown with click handler
+    dropdownElements.forEach(function(element) {
+      // Skip if already initialized
+      if (element.dataset.dropdownInitialized) {
+        return;
+      }
+      
+      // Create Bootstrap dropdown instance
+      const dropdown = new bootstrap.Dropdown(element);
+      
+      // Add click handler to ensure it works with Turbo
+      element.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropdown.toggle();
+      });
+      
+      // Mark as initialized
+      element.dataset.dropdownInitialized = 'true';
+    });
   }
   
-  console.log("✅ Bootstrap detectado:", bootstrap);
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDropdowns);
+  } else {
+    initializeDropdowns();
+  }
   
-  // Find all dropdown toggles
-  const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-  console.log("📋 Dropdowns encontrados:", dropdownElements.length);
+  // Re-initialize on Turbo navigation
+  document.addEventListener('turbo:load', initializeDropdowns);
   
-  // Initialize each dropdown
-  dropdownElements.forEach((element, index) => {
-    console.log(`Inicializando dropdown ${index + 1}:`, element);
-    
-    // Create dropdown instance
-    const dropdown = new bootstrap.Dropdown(element);
-    
-    // Add click handler
-    element.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("🖱️ CLIQUE no dropdown:", this);
-      dropdown.toggle();
-    });
-    
-    console.log(`✅ Dropdown ${index + 1} inicializado!`);
-  });
-  
-  console.log("✨ Todos os dropdowns inicializados!");
-}
-
-// Run when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeDropdowns);
-} else {
-  initializeDropdowns();
-}
-
-// Also run on Turbo navigation
-document.addEventListener('turbo:load', initializeDropdowns);
-
-console.log("✅ dropdowns.js configurado!");
+})();

@@ -4,6 +4,51 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ---
 
+## [1.5.0] - 2024-10-31
+
+### ✨ Adicionado
+- **Sistema completo de gestão de usuários**
+  - CRUD completo de usuários (somente admin)
+  - Visualização de perfil de usuário
+  - Estatísticas de ordens por usuário
+  - Controle de permissões (admin/user)
+- **Menu "Configurações"** com dropdown no navbar (admin only)
+- **Favicon** para o sistema (logo OS)
+- **Documentação completa** de arquitetura (ARCHITECTURE.md)
+- **Guia de setup WSL2** detalhado (WSL2_SETUP.md)
+
+### 🔧 Corrigido
+- **Dropdowns Bootstrap 5** agora funcionam corretamente
+- **Inicialização manual de dropdowns** via Sprockets tradicional
+- **Content Security Policy** configurado para permitir CDN jsDelivr
+- **Problemas de cache** de assets resolvidos
+- **Compatibilidade com Turbo Rails** melhorada
+
+### ⚡ Otimizado
+- **Sistema de assets híbrido** otimizado:
+  - Bootstrap, jQuery e Popper.js via CDN
+  - Dropdowns via Sprockets (app/assets/javascripts/dropdowns.js)
+  - Turbo e Stimulus via Importmap
+- **Logs de debug removidos** em código de produção
+- **Código JavaScript** otimizado e organizado com IIFE
+- **Configuração de segurança** aprimorada (CSP, HSTS, etc.)
+
+### 🔒 Segurança
+- Rate limiting configurado (300 req/min)
+- Proteção contra brute force (5 tentativas/20s)
+- Headers HTTP de segurança completos
+- SSL/HTTPS forçado em produção
+- Encrypted credentials configurado
+
+### 🏗️ Mudanças Técnicas
+- Assets agora híbridos: Sprockets (CSS + dropdowns.js) + Importmap (Turbo/Stimulus) + CDN (Bootstrap/jQuery)
+- CSP permite `cdn.jsdelivr.net` para assets externos
+- Arquivo `dropdowns.js` criado para inicialização manual
+- `application.js` (importmap) simplificado
+- Configuração de assets otimizada
+
+---
+
 ## [1.2.0] - 2024-01-15
 
 ### ✨ Adicionado
