@@ -2,21 +2,11 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 
-// Import jQuery
-import jquery from "jquery"
-window.jQuery = jquery
-window.$ = jquery
+// jQuery, Popper and Bootstrap are loaded via <script> tags in application.html.erb
+// They are available globally as window.jQuery, window.$, window.Popper, and window.bootstrap
 
-// Import Popper.js (required for Bootstrap dropdowns)
-import * as Popper from "@popperjs/core"
-window.Popper = Popper
-
-// Import Bootstrap - usando a versão bundle que já inclui Popper
-import * as bootstrap from "bootstrap"
-window.bootstrap = bootstrap
-
-// Initialize Bootstrap components on Turbo load
-document.addEventListener("turbo:load", () => {
+// Initialize Bootstrap components on Turbo load and page load
+function initializeBootstrapComponents() {
   // Initialize tooltips
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
@@ -24,4 +14,10 @@ document.addEventListener("turbo:load", () => {
   // Initialize popovers
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-})
+}
+
+// Initialize on first load
+document.addEventListener("DOMContentLoaded", initializeBootstrapComponents)
+
+// Initialize on Turbo navigation
+document.addEventListener("turbo:load", initializeBootstrapComponents)
