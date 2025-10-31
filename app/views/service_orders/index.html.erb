@@ -111,11 +111,11 @@
                       <i class="fas fa-eye"></i>
                     <% end %>
                     <%= link_to pdf_service_order_path(order), class: "btn btn-primary", target: "_blank", title: "Gerar PDF" do %>
-                      <i class="fas fa-file-pdf"></i>
+                      <i class="fas fa-file-alt"></i>
                     <% end %>
                     <% if current_user.admin? || order.user == current_user %>
                       <%= link_to edit_service_order_path(order), class: "btn btn-warning", title: "Editar" do %>
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-pencil-alt"></i>
                       <% end %>
                       <%= button_to service_order_path(order), 
                                     method: :delete, 
