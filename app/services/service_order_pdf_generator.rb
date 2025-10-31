@@ -32,23 +32,35 @@ class ServiceOrderPdfGenerator
     company_setting = CompanySetting.instance
     if company_setting.has_logo?
       begin
-        # Criar arquivo temporário com o logo
-        temp_file = Tempfile.new(['logo', File.extname(company_setting.logo_filename)])
-        temp_file.binmode
-        temp_file.write(company_setting.logo_data)
-        temp_file.rewind
+        # Verificar se é SVG (Prawn não suporta SVG nativamente)
+        ext = File.extname(company_setting.logo_filename).downcase
         
-        # Adicionar imagem no PDF
-        @pdf.image temp_file.path, 
-                   fit: [100, 50],
-                   position: :center
-        @pdf.move_down 5
-        
-        temp_file.close
-        temp_file.unlink
+        if ext == '.svg'
+          # Para SVG, apenas mostrar texto em vez do logo
+          Rails.logger.warn "Logo em formato SVG não é suportado em PDF. Use PNG ou JPG."
+        else
+          # Criar arquivo temporário com o logo
+          temp_file = Tempfile.new(['logo', ext])
+          temp_file.binmode
+          temp_file.write(company_setting.logo_data)
+          temp_file.rewind
+          
+          # Adicionar imagem no PDF com dimensões otimizadas
+          @pdf.image temp_file.path, 
+                     fit: [120, 60],
+                     position: :center,
+                     vposition: :top
+          @pdf.move_down 10
+          
+          temp_file.close
+          temp_file.unlink
+        end
       rescue => e
-        # Se houver erro ao processar imagem, apenas ignora
+        # Se houver erro ao processar imagem, loga erro detalhado mas continua
         Rails.logger.error "Erro ao adicionar logo ao PDF: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        # Adiciona mensagem no PDF para debug
+        # @pdf.text "[Logo não pode ser carregada]", size: 8, align: :center, style: :italic
       end
     end
     
