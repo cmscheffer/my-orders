@@ -103,14 +103,14 @@ class CompletedOrdersReportPdf
     ]
 
     @pdf.table(stats_data,
-      width: @pdf.bounds.width / 2,
       cell_style: {
         borders: [:bottom],
         border_width: 0.5,
         border_color: 'CCCCCC',
-        padding: [5, 10]
+        padding: [4, 8],
+        size: 9
       },
-      column_widths: [200, 150]
+      column_widths: { 0 => 180, 1 => 140 }
     ) do
       column(0).font_style = :bold
     end
@@ -130,14 +130,14 @@ class CompletedOrdersReportPdf
     ]
 
     @pdf.table(financial_data,
-      width: @pdf.bounds.width / 2,
       cell_style: {
         borders: [:bottom],
         border_width: 0.5,
         border_color: 'CCCCCC',
-        padding: [5, 10]
+        padding: [4, 8],
+        size: 9
       },
-      column_widths: [200, 150]
+      column_widths: { 0 => 180, 1 => 140 }
     ) do
       column(0).font_style = :bold
       row(2).background_color = 'E8F5E9'
