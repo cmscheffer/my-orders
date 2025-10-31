@@ -1,6 +1,20 @@
 // Entry point for the build script in your package.json
-import "@hotwired/turbo-rails"
-import "./controllers"
+console.log("🚀 application.js carregado!")
+
+// Try to import Turbo and controllers, but don't fail if they error
+try {
+  await import("@hotwired/turbo-rails")
+  console.log("✅ Turbo carregado")
+} catch (error) {
+  console.warn("⚠️ Erro ao carregar Turbo:", error)
+}
+
+try {
+  await import("./controllers")
+  console.log("✅ Controllers carregados")
+} catch (error) {
+  console.warn("⚠️ Erro ao carregar controllers:", error)
+}
 
 // jQuery, Popper and Bootstrap are loaded via <script> tags in application.html.erb
 // They are available globally as window.jQuery, window.$, window.Popper, and window.bootstrap
@@ -8,6 +22,12 @@ import "./controllers"
 // Initialize Bootstrap components on Turbo load and page load
 function initializeBootstrapComponents() {
   console.log("🔄 Inicializando componentes Bootstrap...")
+  
+  // Verify Bootstrap is loaded
+  if (typeof bootstrap === 'undefined') {
+    console.error("❌ Bootstrap não está carregado!")
+    return
+  }
   
   // Initialize all dropdowns manually WITH CLICK HANDLERS
   const dropdownElementList = document.querySelectorAll('[data-bs-toggle="dropdown"]')
@@ -66,3 +86,5 @@ document.addEventListener("turbo:load", () => {
   console.log("🚀 Turbo:load disparado")
   initializeBootstrapComponents()
 })
+
+console.log("✅ application.js carregado completamente!")
