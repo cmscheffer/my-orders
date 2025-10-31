@@ -181,16 +181,23 @@ class CompletedOrdersReportPdf
     ]
 
     @pdf.table(table_data,
-      width: @pdf.bounds.width,
       header: true,
       cell_style: {
-        padding: [3, 4],
+        padding: [3, 3],
         borders: [:bottom],
         border_width: 0.5,
         border_color: 'CCCCCC',
-        size: 9
+        size: 8
       },
-      column_widths: [25, 130, 100, 85, 70, 70, 70]
+      column_widths: {
+        0 => 25,   # #
+        1 => 120,  # Título
+        2 => 95,   # Cliente
+        3 => 80,   # Técnico
+        4 => 65,   # Concluída
+        5 => 65,   # Valor
+        6 => 65    # Pagamento
+      }
     ) do
       row(0).font_style = :bold
       row(0).background_color = 'E0E0E0'
