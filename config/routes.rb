@@ -46,6 +46,9 @@ Rails.application.routes.draw do
     get :show_logo
   end
   
+  # CSP Reports (Security)
+  post "csp_reports", to: "csp_reports#create"
+  
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -31,5 +31,8 @@ module ServiceOrdersApp
     # Set locale to Brazilian Portuguese
     config.i18n.default_locale = :'pt-BR'
     config.i18n.available_locales = [:'pt-BR', :en]
+
+    # Enable Rack Attack middleware for DDoS and brute force protection
+    config.middleware.use Rack::Attack
   end
 end

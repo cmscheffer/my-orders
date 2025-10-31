@@ -1,0 +1,167 @@
+#!/bin/bash
+# Script para testar configurações de segurança
+# Uso: ./bin/test_security
+
+echo "🔒 TESTANDO CONFIGURAÇÕES DE SEGURANÇA"
+echo "======================================="
+echo ""
+
+# Verificar se o servidor está rodando
+if ! curl -s http://localhost:3000 > /dev/null; then
+    echo "❌ ERRO: Servidor não está rodando em http://localhost:3000"
+    echo "   Execute: rails server -b 0.0.0.0 -p 3000"
+    exit 1
+fi
+
+echo "✅ Servidor rodando"
+echo ""
+
+# Teste 1: Headers de segurança
+echo "📋 Teste 1: Verificando Security Headers"
+echo "-----------------------------------------"
+
+HEADERS=$(curl -sI http://localhost:3000/)
+
+check_header() {
+    header_name=$1
+    expected_value=$2
+    
+    if echo "$HEADERS" | grep -qi "$header_name: $expected_value"; then
+        echo "  ✅ $header_name: OK"
+    else
+        echo "  ❌ $header_name: AUSENTE ou INCORRETO"
+        echo "     Esperado: $expected_value"
+    fi
+}
+
+check_header "X-Frame-Options" "DENY"
+check_header "X-Content-Type-Options" "nosniff"
+check_header "X-XSS-Protection" "1; mode=block"
+check_header "Referrer-Policy" "origin-when-cross-origin"
+
+if echo "$HEADERS" | grep -qi "Content-Security-Policy"; then
+    echo "  ✅ Content-Security-Policy: OK"
+else
+    echo "  ❌ Content-Security-Policy: AUSENTE"
+fi
+
+echo ""
+
+# Teste 2: Rate Limiting de Login
+echo "🚦 Teste 2: Rate Limiting de Login (5 tentativas)"
+echo "--------------------------------------------------"
+
+SUCCESS_COUNT=0
+FAIL_COUNT=0
+
+for i in {1..6}; do
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:3000/users/sign_in \
+        -d "user[email]=test@example.com" \
+        -d "user[password]=wrongpassword" \
+        -H "Content-Type: application/x-www-form-urlencoded")
+    
+    if [ "$RESPONSE" = "429" ]; then
+        echo "  Tentativa $i: 🛑 BLOQUEADO (HTTP 429) - Rate limit funcionando!"
+        FAIL_COUNT=$((FAIL_COUNT + 1))
+    else
+        echo "  Tentativa $i: ✅ Permitido (HTTP $RESPONSE)"
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+    fi
+    
+    sleep 0.5
+done
+
+echo ""
+if [ $FAIL_COUNT -gt 0 ]; then
+    echo "  ✅ Rate limiting está FUNCIONANDO!"
+    echo "     $SUCCESS_COUNT requisições permitidas, $FAIL_COUNT bloqueadas"
+else
+    echo "  ⚠️  AVISO: Nenhuma requisição foi bloqueada"
+    echo "     Verifique se o Rack Attack está configurado corretamente"
+fi
+
+echo ""
+
+# Teste 3: Rate Limiting Geral (simplificado)
+echo "🌐 Teste 3: Rate Limiting Geral (20 requisições)"
+echo "-------------------------------------------------"
+
+BLOCKED=0
+for i in {1..20}; do
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
+    
+    if [ "$RESPONSE" = "429" ]; then
+        BLOCKED=$((BLOCKED + 1))
+    fi
+    
+    # Mostrar progresso a cada 5 requisições
+    if [ $((i % 5)) -eq 0 ]; then
+        echo "  Progresso: $i/20 requisições..."
+    fi
+done
+
+echo ""
+if [ $BLOCKED -eq 0 ]; then
+    echo "  ✅ Requisições gerais permitidas (abaixo do limite)"
+    echo "     Para testar o limite completo, faça 300+ requisições"
+else
+    echo "  🛑 Algumas requisições foram bloqueadas: $BLOCKED/20"
+fi
+
+echo ""
+
+# Teste 4: Proteção contra Clickjacking
+echo "🖼️  Teste 4: Proteção contra Clickjacking"
+echo "----------------------------------------"
+
+XFRAME=$(echo "$HEADERS" | grep -i "x-frame-options" | grep -i "deny")
+if [ ! -z "$XFRAME" ]; then
+    echo "  ✅ X-Frame-Options: DENY está ativo"
+    echo "     Seu site NÃO pode ser embedado em iframes"
+else
+    echo "  ❌ X-Frame-Options não está configurado corretamente"
+fi
+
+echo ""
+
+# Teste 5: Content Security Policy
+echo "🛡️  Teste 5: Content Security Policy"
+echo "------------------------------------"
+
+CSP=$(echo "$HEADERS" | grep -i "content-security-policy")
+if [ ! -z "$CSP" ]; then
+    echo "  ✅ CSP está ativo"
+    
+    if echo "$CSP" | grep -q "default-src 'self'"; then
+        echo "  ✅ default-src 'self' configurado"
+    fi
+    
+    if echo "$CSP" | grep -q "script-src"; then
+        echo "  ✅ script-src configurado"
+    fi
+    
+    if echo "$CSP" | grep -q "object-src 'none'"; then
+        echo "  ✅ object-src 'none' (bloqueando Flash/Java)"
+    fi
+else
+    echo "  ❌ CSP não está configurado"
+fi
+
+echo ""
+
+# Resumo Final
+echo "📊 RESUMO DOS TESTES"
+echo "===================="
+echo ""
+echo "Security Headers:"
+echo "  • X-Frame-Options: $(echo "$HEADERS" | grep -i "x-frame-options" | cut -d: -f2 | xargs)"
+echo "  • X-Content-Type-Options: $(echo "$HEADERS" | grep -i "x-content-type-options" | cut -d: -f2 | xargs)"
+echo "  • CSP: $(echo "$HEADERS" | grep -qi "content-security-policy" && echo "Ativo" || echo "Inativo")"
+echo ""
+echo "Rate Limiting:"
+echo "  • Login: $([ $FAIL_COUNT -gt 0 ] && echo "✅ Funcionando" || echo "⚠️  Verificar")"
+echo "  • Geral: $([ $BLOCKED -eq 0 ] && echo "✅ Abaixo do limite" || echo "🛑 $BLOCKED bloqueadas")"
+echo ""
+echo "🎉 Testes concluídos!"
+echo ""
+echo "Para mais detalhes, veja: SECURITY.md"
