@@ -48,12 +48,12 @@
               <div class="mb-3">
                 <%= f.label :role, "Papel", class: "form-label" %>
                 <%= f.select :role, 
-                    options_for_select([['Técnico', 'technician'], ['Administrador', 'admin']], @user.role),
+                    options_for_select([['Usuário', 'user'], ['Administrador', 'admin']], @user.role),
                     {}, 
                     class: "form-select" %>
                 <small class="form-text text-muted">
                   <strong>Administrador:</strong> Acesso total ao sistema<br>
-                  <strong>Técnico:</strong> Acesso apenas às suas ordens
+                  <strong>Usuário:</strong> Acesso às suas próprias ordens
                 </small>
               </div>
             <% end %>

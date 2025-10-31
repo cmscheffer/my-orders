@@ -22,6 +22,8 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to users_path, notice: 'Usuário criado com sucesso.'
     else
+      Rails.logger.error "Erro ao criar usuário: #{@user.errors.full_messages.join(', ')}"
+      flash.now[:alert] = 'Erro ao criar usuário. Verifique os campos abaixo.'
       render :new, status: :unprocessable_entity
     end
   end
