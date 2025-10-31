@@ -190,7 +190,7 @@ class CompletedOrdersReportPdf
         border_color: 'CCCCCC',
         size: 9
       },
-      column_widths: [40, 150, 120, 100, 80, 80, 80]
+      column_widths: [30, 140, 110, 90, 75, 75, 75]
     ) do
       row(0).font_style = :bold
       row(0).background_color = 'E0E0E0'
