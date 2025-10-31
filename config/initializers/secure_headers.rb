@@ -14,7 +14,7 @@ SecureHeaders::Configuration.default do |config|
     object_src: %w['none'],
     script_src: %w['self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net],
     style_src: %w['self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com],
-    connect_src: %w['self'],
+    connect_src: %w['self' https://cdn.jsdelivr.net],
     base_uri: %w['self'],
     form_action: %w['self'],
     frame_ancestors: %w['none'],
