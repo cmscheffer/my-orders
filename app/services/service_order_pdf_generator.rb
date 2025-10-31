@@ -314,10 +314,18 @@ class ServiceOrderPdfGenerator
   def add_footer
     @pdf.move_down 40
 
-    # Linha para assinatura
-    @pdf.stroke_horizontal_line 50, 250, at: @pdf.cursor
+    # Linha para assinatura do cliente
+    signature_start = 50
+    signature_end = 250
+    signature_width = signature_end - signature_start
+    
+    @pdf.stroke_horizontal_line signature_start, signature_end, at: @pdf.cursor
     @pdf.move_down 5
-    @pdf.text "Assinatura do Cliente", align: :center, size: 10
+    
+    # Centralizar texto exatamente sobre a linha
+    @pdf.bounding_box([signature_start, @pdf.cursor], width: signature_width) do
+      @pdf.text "Assinatura do Cliente", align: :center, size: 10
+    end
 
     # Informações do rodapé
     @pdf.move_cursor_to 30
