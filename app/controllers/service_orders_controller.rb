@@ -11,7 +11,8 @@ class ServiceOrdersController < ApplicationController
     @service_orders = @service_orders.by_status(params[:status]) if params[:status].present?
     @service_orders = @service_orders.by_priority(params[:priority]) if params[:priority].present?
 
-    @service_orders = @service_orders.page(params[:page]).per(10) if defined?(Kaminari)
+    # Pagination
+    @service_orders = @service_orders.page(params[:page]).per(10)
   end
 
   # GET /service_orders/1

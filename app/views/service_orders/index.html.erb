@@ -132,6 +132,16 @@
           </tbody>
         </table>
       </div>
+      
+      <!-- Paginação -->
+      <div class="mt-4 d-flex justify-content-center">
+        <%= paginate @service_orders, theme: 'twitter-bootstrap-5' %>
+      </div>
+      
+      <!-- Informação de entries -->
+      <div class="mt-2 text-center text-muted">
+        <%= page_entries_info @service_orders, entry_name: 'ordem' %>
+      </div>
     <% else %>
       <p class="text-muted text-center py-4">
         Nenhuma ordem de serviço encontrada.

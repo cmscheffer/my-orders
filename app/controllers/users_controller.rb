@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_action :authorize_user_access!, only: [:show, :edit, :update]
 
   def index
-    @users = User.all.order(created_at: :desc)
+    @users = User.all.order(created_at: :desc).page(params[:page]).per(15)
   end
 
   def show

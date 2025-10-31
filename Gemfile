@@ -69,9 +69,21 @@ gem "prawn-table", "~> 0.2"
 gem "rack-attack", "~> 6.7" # Proteção contra DDoS e brute force
 gem "secure_headers", "~> 6.5" # Headers de segurança HTTP
 
+# Pagination
+gem "kaminari", "~> 1.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  
+  # RSpec for testing
+  gem "rspec-rails", "~> 6.1"
+  
+  # Factory Bot for test data
+  gem "factory_bot_rails", "~> 6.4"
+  
+  # Faker for generating fake data
+  gem "faker", "~> 3.2"
 end
 
 group :development do
@@ -89,4 +101,13 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  
+  # Shoulda Matchers for cleaner tests
+  gem "shoulda-matchers", "~> 6.0"
+  
+  # Database Cleaner for cleaning test database
+  gem "database_cleaner-active_record", "~> 2.1"
+  
+  # SimpleCov for code coverage
+  gem "simplecov", require: false
 end
