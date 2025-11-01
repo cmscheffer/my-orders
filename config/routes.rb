@@ -33,7 +33,10 @@ Rails.application.routes.draw do
   # Reports
   resources :reports, only: [:index] do
     collection do
-      get :completed_orders
+      get :orders_by_period
+      get :revenue
+      get :technicians
+      get :customers
     end
   end
   

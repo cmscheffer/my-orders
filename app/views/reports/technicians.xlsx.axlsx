@@ -1,0 +1,120 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Desempenho de Técnicos") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "5B9BD5",
+    fg_color: "FFFFFF",
+    b: true,
+    alignment: { horizontal: :center }
+  )
+  
+  money_style = sheet.styles.add_style(format_code: 'R$ #,##0.00')
+  percent_style = sheet.styles.add_style(format_code: '0.0"%"')
+  
+  # Cabeçalho
+  sheet.add_row [
+    "Técnico",
+    "Email",
+    "Telefone",
+    "Total Ordens",
+    "Concluídas",
+    "Em Andamento",
+    "Pendentes",
+    "Taxa Conclusão",
+    "Receita Total",
+    "Tempo Médio (dias)"
+  ], style: header_style
+  
+  # Dados
+  @technicians_data.each do |data|
+    sheet.add_row [
+      data[:technician].name,
+      data[:technician].email,
+      data[:technician].phone,
+      data[:total_orders],
+      data[:completed],
+      data[:in_progress],
+      data[:pending],
+      data[:completion_rate],
+      data[:total_revenue],
+      data[:average_completion_time]
+    ], style: [nil, nil, nil, nil, nil, nil, nil, percent_style, money_style]
+  end
+  
+  # Totais
+  sheet.add_row []
+  total_orders = @technicians_data.sum { |d| d[:total_orders] }
+  total_revenue = @technicians_data.sum { |d| d[:total_revenue] }
+  
+  sheet.add_row [
+    "TOTAIS",
+    "",
+    "",
+    total_orders,
+    @technicians_data.sum { |d| d[:completed] },
+    @technicians_data.sum { |d| d[:in_progress] },
+    @technicians_data.sum { |d| d[:pending] },
+    "",
+    total_revenue,
+    ""
+  ], style: [header_style, nil, nil, header_style, header_style, header_style, header_style, nil, money_style]
+end
+
+# Planilha de Ranking
+wb.add_worksheet(name: "Ranking") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "70AD47",
+    fg_color: "FFFFFF",
+    b: true
+  )
+  
+  money_style = sheet.styles.add_style(format_code: 'R$ #,##0.00')
+  
+  # Ranking por Quantidade
+  sheet.add_row ["TOP TÉCNICOS - POR QUANTIDADE"], style: header_style
+  sheet.add_row ["Posição", "Técnico", "Ordens Concluídas"], style: header_style
+  
+  @technicians_data
+    .sort_by { |d| -d[:completed] }
+    .first(10)
+    .each_with_index do |data, index|
+      sheet.add_row [index + 1, data[:technician].name, data[:completed]]
+    end
+  
+  sheet.add_row []
+  sheet.add_row []
+  
+  # Ranking por Receita
+  sheet.add_row ["TOP TÉCNICOS - POR RECEITA"], style: header_style
+  sheet.add_row ["Posição", "Técnico", "Receita Total"], style: header_style
+  
+  @technicians_data
+    .sort_by { |d| -d[:total_revenue] }
+    .first(10)
+    .each_with_index do |data, index|
+      sheet.add_row [
+        index + 1,
+        data[:technician].name,
+        data[:total_revenue]
+      ], style: [nil, nil, money_style]
+    end
+  
+  sheet.add_row []
+  sheet.add_row []
+  
+  # Ranking por Taxa de Conclusão
+  sheet.add_row ["TOP TÉCNICOS - POR TAXA DE CONCLUSÃO"], style: header_style
+  sheet.add_row ["Posição", "Técnico", "Taxa de Conclusão (%)"], style: header_style
+  
+  @technicians_data
+    .select { |d| d[:total_orders] >= 5 } # Mínimo 5 ordens
+    .sort_by { |d| -d[:completion_rate] }
+    .first(10)
+    .each_with_index do |data, index|
+      sheet.add_row [
+        index + 1,
+        data[:technician].name,
+        "#{data[:completion_rate]}%"
+      ]
+    end
+end

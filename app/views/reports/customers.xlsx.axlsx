@@ -1,0 +1,88 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Clientes") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "C00000",
+    fg_color: "FFFFFF",
+    b: true,
+    alignment: { horizontal: :center }
+  )
+  
+  money_style = sheet.styles.add_style(format_code: 'R$ #,##0.00')
+  
+  # Cabeçalho
+  sheet.add_row [
+    "Cliente",
+    "Email",
+    "Telefone",
+    "Quantidade de Ordens",
+    "Valor Total Gasto"
+  ], style: header_style
+  
+  # Dados
+  @customers_data.each do |customer|
+    sheet.add_row [
+      customer.customer_name,
+      customer.customer_email || "-",
+      customer.customer_phone || "-",
+      customer.orders_count,
+      customer.total_spent
+    ], style: [nil, nil, nil, nil, money_style]
+  end
+  
+  # Totais
+  sheet.add_row []
+  sheet.add_row [
+    "TOTAIS",
+    "",
+    "",
+    @customers_data.sum(&:orders_count),
+    @customers_data.sum(&:total_spent)
+  ], style: [header_style, nil, nil, header_style, money_style]
+end
+
+# Planilha de TOP Clientes
+wb.add_worksheet(name: "TOP Clientes") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "FFC000",
+    fg_color: "000000",
+    b: true
+  )
+  
+  money_style = sheet.styles.add_style(format_code: 'R$ #,##0.00')
+  
+  # TOP por Quantidade
+  sheet.add_row ["TOP 20 CLIENTES - POR QUANTIDADE"], style: header_style
+  sheet.add_row ["Posição", "Cliente", "Email", "Ordens"], style: header_style
+  
+  @customers_data
+    .sort_by { |c| -c.orders_count }
+    .first(20)
+    .each_with_index do |customer, index|
+      sheet.add_row [
+        index + 1,
+        customer.customer_name,
+        customer.customer_email || "-",
+        customer.orders_count
+      ]
+    end
+  
+  sheet.add_row []
+  sheet.add_row []
+  
+  # TOP por Valor
+  sheet.add_row ["TOP 20 CLIENTES - POR VALOR GASTO"], style: header_style
+  sheet.add_row ["Posição", "Cliente", "Email", "Valor Total"], style: header_style
+  
+  @customers_data
+    .sort_by { |c| -c.total_spent.to_f }
+    .first(20)
+    .each_with_index do |customer, index|
+      sheet.add_row [
+        index + 1,
+        customer.customer_name,
+        customer.customer_email || "-",
+        customer.total_spent
+      ], style: [nil, nil, nil, money_style]
+    end
+end

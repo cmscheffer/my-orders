@@ -1,0 +1,120 @@
+wb = xlsx_package.workbook
+
+# Planilha de Receita Detalhada
+wb.add_worksheet(name: "Receita Detalhada") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "70AD47",
+    fg_color: "FFFFFF",
+    b: true,
+    alignment: { horizontal: :center }
+  )
+  
+  money_style = sheet.styles.add_style(format_code: 'R$ #,##0.00')
+  
+  # Cabeçalho
+  sheet.add_row [
+    "ID",
+    "Título",
+    "Cliente",
+    "Valor Serviço",
+    "Valor Peças",
+    "Valor Total",
+    "Status Pagamento",
+    "Método Pagamento",
+    "Data Pagamento",
+    "Data Conclusão"
+  ], style: header_style
+  
+  # Dados
+  @orders.each do |order|
+    sheet.add_row [
+      order.id,
+      order.title,
+      order.customer_name,
+      order.service_value || 0,
+      order.parts_value || 0,
+      order.total_value || 0,
+      order.payment_status&.humanize || "-",
+      order.payment_method || "-",
+      order.payment_date&.strftime('%d/%m/%Y') || "-",
+      order.completed_at&.strftime('%d/%m/%Y')
+    ], style: [nil, nil, nil, money_style, money_style, money_style]
+  end
+  
+  # Totais
+  sheet.add_row []
+  sheet.add_row [
+    "TOTAIS",
+    "",
+    "",
+    @orders.sum(:service_value),
+    @orders.sum(:parts_value),
+    @orders.sum(:total_value)
+  ], style: [header_style, nil, nil, money_style, money_style, money_style]
+end
+
+# Planilha de Resumo Financeiro
+wb.add_worksheet(name: "Resumo Financeiro") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "4472C4",
+    fg_color: "FFFFFF",
+    b: true
+  )
+  
+  money_style = sheet.styles.add_style(
+    format_code: 'R$ #,##0.00',
+    b: true,
+    sz: 14
+  )
+  
+  sheet.add_row ["RESUMO FINANCEIRO"], style: header_style
+  sheet.add_row ["Período:", "#{@start_date.strftime('%d/%m/%Y')} a #{@end_date.strftime('%d/%m/%Y')}"]
+  sheet.add_row []
+  
+  sheet.add_row ["Receita Total:", @stats[:total_revenue]], style: [nil, money_style]
+  sheet.add_row ["Receita de Serviços:", @stats[:service_revenue]], style: [nil, money_style]
+  sheet.add_row ["Receita de Peças:", @stats[:parts_revenue]], style: [nil, money_style]
+  sheet.add_row []
+  
+  sheet.add_row ["Quantidade de Ordens:", @stats[:orders_count]]
+  sheet.add_row ["Valor Médio por Ordem:", @stats[:average_order_value]], style: [nil, money_style]
+  sheet.add_row []
+  
+  sheet.add_row ["Por Status de Pagamento:"], style: header_style
+  @stats[:by_payment_status].each do |stat|
+    sheet.add_row [
+      "#{stat[:payment_status].humanize}:",
+      "#{stat[:count]} ordens",
+      stat[:value]
+    ], style: [nil, nil, money_style]
+  end
+end
+
+# Planilha de Receita por Mês
+wb.add_worksheet(name: "Receita Mensal") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "FFC000",
+    fg_color: "000000",
+    b: true,
+    alignment: { horizontal: :center }
+  )
+  
+  money_style = sheet.styles.add_style(format_code: 'R$ #,##0.00')
+  
+  sheet.add_row ["Mês", "Quantidade", "Receita"], style: header_style
+  
+  @stats[:by_month].each do |month_data|
+    sheet.add_row [
+      month_data[:month],
+      month_data[:orders],
+      month_data[:revenue]
+    ], style: [nil, nil, money_style]
+  end
+  
+  sheet.add_row []
+  sheet.add_row [
+    "TOTAL",
+    @stats[:orders_count],
+    @stats[:total_revenue]
+  ], style: [header_style, header_style, money_style]
+end

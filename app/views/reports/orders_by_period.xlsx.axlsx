@@ -1,0 +1,101 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Ordens de Serviço") do |sheet|
+  # Estilo para cabeçalho
+  header_style = sheet.styles.add_style(
+    bg_color: "4472C4",
+    fg_color: "FFFFFF",
+    b: true,
+    alignment: { horizontal: :center }
+  )
+  
+  # Estilo para valores monetários
+  money_style = sheet.styles.add_style(
+    format_code: 'R$ #,##0.00'
+  )
+  
+  # Cabeçalho
+  sheet.add_row [
+    "ID",
+    "Título",
+    "Cliente",
+    "Equipamento",
+    "Status",
+    "Prioridade",
+    "Técnico",
+    "Valor Serviço",
+    "Valor Peças",
+    "Valor Total",
+    "Status Pagamento",
+    "Data Criação",
+    "Data Vencimento",
+    "Data Conclusão"
+  ], style: header_style
+  
+  # Dados
+  @orders.each do |order|
+    sheet.add_row [
+      order.id,
+      order.title,
+      order.customer_name,
+      order.equipment_name,
+      order.status.humanize,
+      order.priority.humanize,
+      order.technician&.name || "-",
+      order.service_value || 0,
+      order.parts_value || 0,
+      order.total_value || 0,
+      order.payment_status&.humanize || "-",
+      order.created_at.strftime('%d/%m/%Y'),
+      order.due_date&.strftime('%d/%m/%Y') || "-",
+      order.completed_at&.strftime('%d/%m/%Y') || "-"
+    ], style: [nil, nil, nil, nil, nil, nil, nil, money_style, money_style, money_style]
+  end
+  
+  # Linha de totais
+  sheet.add_row []
+  sheet.add_row [
+    "TOTAIS",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    @orders.sum(:service_value),
+    @orders.sum(:parts_value),
+    @orders.sum(:total_value)
+  ], style: [header_style, nil, nil, nil, nil, nil, nil, money_style, money_style, money_style]
+end
+
+# Planilha de estatísticas
+wb.add_worksheet(name: "Estatísticas") do |sheet|
+  header_style = sheet.styles.add_style(
+    bg_color: "70AD47",
+    fg_color: "FFFFFF",
+    b: true
+  )
+  
+  sheet.add_row ["Estatísticas do Período"], style: header_style
+  sheet.add_row ["Período:", "#{@start_date.strftime('%d/%m/%Y')} a #{@end_date.strftime('%d/%m/%Y')}"]
+  sheet.add_row []
+  
+  sheet.add_row ["Total de Ordens:", @stats[:total]]
+  sheet.add_row ["Ordens Concluídas:", @stats[:completed]]
+  sheet.add_row ["Ordens Canceladas:", @stats[:cancelled]]
+  sheet.add_row []
+  
+  sheet.add_row ["Por Status:"], style: header_style
+  @stats[:by_status].each do |stat|
+    sheet.add_row ["#{stat[:status].humanize}:", stat[:count]]
+  end
+  
+  sheet.add_row []
+  sheet.add_row ["Por Prioridade:"], style: header_style
+  @stats[:by_priority].each do |stat|
+    sheet.add_row ["#{stat[:priority].humanize}:", stat[:count]]
+  end
+  
+  sheet.add_row []
+  sheet.add_row ["Tempo Médio de Conclusão:", "#{@stats[:average_completion_time]} dias"]
+end

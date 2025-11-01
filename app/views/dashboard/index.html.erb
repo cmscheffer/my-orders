@@ -1,109 +1,413 @@
-<div class="row mb-4">
-  <div class="col">
-    <h1 class="display-4">Dashboard</h1>
-    <p class="lead">Bem-vindo, <%= current_user.name %>!</p>
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+    <%= link_to reports_path, class: "btn btn-primary" do %>
+      <i class="fas fa-file-alt"></i> Relatórios Detalhados
+    <% end %>
   </div>
-</div>
 
-<div class="row mb-4">
-  <div class="col-md-3">
-    <div class="card text-white bg-info mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Total de OS</h5>
-        <p class="card-text display-4"><%= @total_orders %></p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-3">
-    <div class="card text-white bg-warning mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Pendentes</h5>
-        <p class="card-text display-4"><%= @pending_orders %></p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-3">
-    <div class="card text-white bg-primary mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Em Andamento</h5>
-        <p class="card-text display-4"><%= @in_progress_orders %></p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-3">
-    <div class="card text-white bg-success mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Concluídas</h5>
-        <p class="card-text display-4"><%= @completed_orders %></p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<% if @overdue_orders.any? %>
-<div class="row mb-4">
-  <div class="col">
-    <div class="alert alert-danger">
-      <h5 class="alert-heading">⚠️ Ordens Atrasadas</h5>
-      <p>Você tem <%= @overdue_orders.count %> ordem(ns) de serviço atrasada(s)!</p>
-      <%= link_to "Ver todas", service_orders_path, class: "btn btn-sm btn-danger" %>
-    </div>
-  </div>
-</div>
-<% end %>
-
-<div class="row">
-  <div class="col">
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Ordens de Serviço Recentes</h5>
-        <%= link_to "Ver todas", service_orders_path, class: "btn btn-sm btn-primary" %>
-      </div>
-      <div class="card-body">
-        <% if @recent_orders.any? %>
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Título</th>
-                  <th>Status</th>
-                  <th>Prioridade</th>
-                  <th>Criado em</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @recent_orders.each do |order| %>
-                  <tr>
-                    <td><%= order.id %></td>
-                    <td><%= link_to order.title, service_order_path(order) %></td>
-                    <td>
-                      <span class="badge <%= order.status_badge_class %>">
-                        <%= order.status.humanize %>
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge <%= order.priority_badge_class %>">
-                        <%= order.priority.humanize %>
-                      </span>
-                    </td>
-                    <td><%= l(order.created_at, format: :short) %></td>
-                    <td>
-                      <%= link_to "Ver", service_order_path(order), class: "btn btn-sm btn-info" %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
+  <!-- Cards de Estatísticas -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-primary h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Total de Ordens</h6>
+              <h2 class="mb-0"><%= @stats[:total_orders] %></h2>
+            </div>
+            <i class="fas fa-clipboard-list fa-3x opacity-50"></i>
           </div>
-        <% else %>
-          <p class="text-muted text-center">Nenhuma ordem de serviço encontrada.</p>
-        <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-white bg-warning h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Pendentes</h6>
+              <h2 class="mb-0"><%= @stats[:pending_orders] %></h2>
+            </div>
+            <i class="fas fa-hourglass-half fa-3x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-white bg-info h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Em Andamento</h6>
+              <h2 class="mb-0"><%= @stats[:in_progress_orders] %></h2>
+            </div>
+            <i class="fas fa-spinner fa-3x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-white bg-success h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Concluídas</h6>
+              <h2 class="mb-0"><%= @stats[:completed_orders] %></h2>
+            </div>
+            <i class="fas fa-check-circle fa-3x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de Estatísticas Adicionais -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-danger h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Atrasadas</h6>
+              <h2 class="mb-0"><%= @stats[:overdue_orders] %></h2>
+            </div>
+            <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-white bg-dark h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Urgentes</h6>
+              <h2 class="mb-0"><%= @stats[:urgent_orders] %></h2>
+            </div>
+            <i class="fas fa-bolt fa-3x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-primary h-100">
+        <div class="card-body">
+          <h6 class="card-title text-muted">Taxa de Conclusão</h6>
+          <h2 class="text-primary"><%= @stats[:completion_rate] %>%</h2>
+          <div class="progress mt-2" style="height: 8px;">
+            <div class="progress-bar bg-primary" role="progressbar" 
+                 style="width: <%= @stats[:completion_rate] %>%"
+                 aria-valuenow="<%= @stats[:completion_rate] %>" 
+                 aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-secondary h-100">
+        <div class="card-body">
+          <h6 class="card-title text-muted">Canceladas</h6>
+          <h2 class="text-secondary"><%= @stats[:cancelled_orders] %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards Financeiros -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card border-success h-100">
+        <div class="card-body">
+          <h5 class="card-title text-success">
+            <i class="fas fa-dollar-sign"></i> Receita Total (Concluídas)
+          </h5>
+          <h2 class="text-success">
+            R$ <%= number_with_precision(@financial_stats[:total_revenue], precision: 2, delimiter: '.', separator: ',') %>
+          </h2>
+          <div class="mt-3">
+            <small class="text-muted">
+              Serviços: R$ <%= number_with_precision(@financial_stats[:service_revenue], precision: 2, delimiter: '.', separator: ',') %>
+            </small><br>
+            <small class="text-muted">
+              Peças: R$ <%= number_with_precision(@financial_stats[:parts_revenue], precision: 2, delimiter: '.', separator: ',') %>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card border-warning h-100">
+        <div class="card-body">
+          <h5 class="card-title text-warning">
+            <i class="fas fa-clock"></i> Receita Pendente
+          </h5>
+          <h2 class="text-warning">
+            R$ <%= number_with_precision(@financial_stats[:pending_revenue], precision: 2, delimiter: '.', separator: ',') %>
+          </h2>
+          <div class="mt-3">
+            <small class="text-muted">
+              Ticket Médio: R$ <%= number_with_precision(@financial_stats[:average_order_value], precision: 2, delimiter: '.', separator: ',') %>
+            </small><br>
+            <small class="text-muted">
+              Pagas: <%= @financial_stats[:paid_orders] %> | Pendentes: <%= @financial_stats[:pending_payment] %>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Ordens por Status</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="statusChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Ordens por Prioridade</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="priorityChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-chart-line"></i> Ordens Criadas (Últimos 7 dias)</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="ordersTimelineChart" height="80"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-chart-area"></i> Receita por Mês (Últimos 6 meses)</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="revenueChart" height="80"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listas -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-clock"></i> Ordens Recentes</h5>
+        </div>
+        <div class="list-group list-group-flush">
+          <% if @recent_orders.any? %>
+            <% @recent_orders.each do |order| %>
+              <%= link_to service_order_path(order), class: "list-group-item list-group-item-action" do %>
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1"><%= order.title %></h6>
+                    <small class="text-muted"><%= order.customer_name %></small>
+                  </div>
+                  <span class="badge <%= order.status_badge_class %>"><%= order.status.humanize %></span>
+                </div>
+              <% end %>
+            <% end %>
+          <% else %>
+            <div class="list-group-item text-muted text-center">
+              Nenhuma ordem recente
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Ordens Atrasadas</h5>
+        </div>
+        <div class="list-group list-group-flush">
+          <% if @overdue_orders.any? %>
+            <% @overdue_orders.each do |order| %>
+              <%= link_to service_order_path(order), class: "list-group-item list-group-item-action" do %>
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1"><%= order.title %></h6>
+                    <small class="text-danger">Vencimento: <%= l(order.due_date, format: :short) %></small>
+                  </div>
+                  <span class="badge <%= order.priority_badge_class %>"><%= order.priority.humanize %></span>
+                </div>
+              <% end %>
+            <% end %>
+          <% else %>
+            <div class="list-group-item text-muted text-center">
+              Nenhuma ordem atrasada
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0"><i class="fas fa-bolt"></i> Ordens Urgentes</h5>
+        </div>
+        <div class="list-group list-group-flush">
+          <% if @urgent_orders.any? %>
+            <% @urgent_orders.each do |order| %>
+              <%= link_to service_order_path(order), class: "list-group-item list-group-item-action" do %>
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1"><%= order.title %></h6>
+                    <small class="text-muted"><%= order.customer_name %></small>
+                  </div>
+                  <span class="badge <%= order.status_badge_class %>"><%= order.status.humanize %></span>
+                </div>
+              <% end %>
+            <% end %>
+          <% else %>
+            <div class="list-group-item text-muted text-center">
+              Nenhuma ordem urgente
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// Gráfico de Status
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+new Chart(statusCtx, {
+  type: 'pie',
+  data: {
+    labels: <%= raw @chart_data[:orders_by_status][:labels].to_json %>,
+    datasets: [{
+      data: <%= raw @chart_data[:orders_by_status][:data].to_json %>,
+      backgroundColor: [
+        '#ffc107', // pending - warning
+        '#17a2b8', // in_progress - info
+        '#28a745', // completed - success
+        '#6c757d'  // cancelled - secondary
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false
+  }
+});
+
+// Gráfico de Prioridade
+const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+new Chart(priorityCtx, {
+  type: 'bar',
+  data: {
+    labels: <%= raw @chart_data[:orders_by_priority][:labels].to_json %>,
+    datasets: [{
+      label: 'Quantidade',
+      data: <%= raw @chart_data[:orders_by_priority][:data].to_json %>,
+      backgroundColor: [
+        '#6c757d', // low - secondary
+        '#007bff', // medium - primary
+        '#ffc107', // high - warning
+        '#dc3545'  // urgent - danger
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
+  }
+});
+
+// Gráfico de Timeline (últimos 7 dias)
+const timelineCtx = document.getElementById('ordersTimelineChart').getContext('2d');
+new Chart(timelineCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @chart_data[:orders_last_7_days][:labels].to_json %>,
+    datasets: [{
+      label: 'Ordens Criadas',
+      data: <%= raw @chart_data[:orders_last_7_days][:data].to_json %>,
+      borderColor: '#007bff',
+      backgroundColor: 'rgba(0, 123, 255, 0.1)',
+      tension: 0.4,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false
+  }
+});
+
+// Gráfico de Receita (últimos 6 meses)
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+new Chart(revenueCtx, {
+  type: 'bar',
+  data: {
+    labels: <%= raw @chart_data[:revenue_last_6_months][:labels].to_json %>,
+    datasets: [{
+      label: 'Receita (R$)',
+      data: <%= raw @chart_data[:revenue_last_6_months][:data].to_json %>,
+      backgroundColor: '#28a745',
+      borderColor: '#1e7e34',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return 'R$ ' + value.toLocaleString('pt-BR');
+          }
+        }
+      }
+    }
+  }
+});
+</script>
