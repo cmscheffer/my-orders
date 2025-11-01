@@ -18,14 +18,30 @@
             <%= f.email_field :email, autocomplete: "email", class: "form-control", placeholder: "seu@email.com" %>
           </div>
 
+          <!-- Requisitos de Senha -->
+          <%= password_requirements_list %>
+
           <div class="mb-3">
             <%= f.label :password, "Senha", class: "form-label" %>
-            <%= f.password_field :password, autocomplete: "new-password", class: "form-control", placeholder: "Mínimo 6 caracteres" %>
-            <% if @minimum_password_length %>
-              <small class="form-text text-muted">
-                (mínimo <%= @minimum_password_length %> caracteres)
-              </small>
-            <% end %>
+            <%= f.password_field :password, 
+                autocomplete: "new-password", 
+                class: "form-control", 
+                placeholder: "Digite uma senha forte",
+                data: { strength_indicator: "password-strength-indicator-signup" } %>
+            
+            <!-- Indicador de Força -->
+            <div id="password-strength-indicator-signup" class="password-strength-indicator mt-2" style="display: none;">
+              <small class="text-muted">Força da senha: </small>
+              <span class="password-strength-text fw-bold"></span>
+              <div class="progress mt-1" style="height: 5px;">
+                <div class="progress-bar password-strength-bar" 
+                     role="progressbar"
+                     style="width: 0%"
+                     aria-valuenow="0"
+                     aria-valuemin="0"
+                     aria-valuemax="100"></div>
+              </div>
+            </div>
           </div>
 
           <div class="mb-3">

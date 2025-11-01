@@ -9,6 +9,9 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
+  
+  # Validação de senha forte
+  validates :password, password_strength: true, if: :password_required?
 
   # Roles
   enum role: { user: 0, admin: 1 }

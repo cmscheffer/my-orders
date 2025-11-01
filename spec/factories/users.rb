@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :user do
     name { Faker::Name.name }
     email { Faker::Internet.unique.email }
-    password { 'password123' }
-    password_confirmation { 'password123' }
+    password { 'P@ssw0rd123' }  # Senha forte que atende todos os requisitos
+    password_confirmation { 'P@ssw0rd123' }
     role { :user }
 
     trait :admin do

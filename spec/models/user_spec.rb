@@ -122,4 +122,35 @@ RSpec.describe User, type: :model do
       expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
     end
   end
+
+  # Password strength validations
+  describe 'password strength validations' do
+    it 'rejects password without uppercase letter' do
+      user = build(:user, password: 'abc123!@#', password_confirmation: 'abc123!@#')
+      expect(user).not_to be_valid
+      expect(user.errors[:password]).to include('deve conter pelo menos uma letra maiúscula')
+    end
+    
+    it 'rejects password without number' do
+      user = build(:user, password: 'Abcdef!@#', password_confirmation: 'Abcdef!@#')
+      expect(user).not_to be_valid
+      expect(user.errors[:password]).to include('deve conter pelo menos um número')
+    end
+    
+    it 'rejects password without special character' do
+      user = build(:user, password: 'Abc12345', password_confirmation: 'Abc12345')
+      expect(user).not_to be_valid
+      expect(user.errors[:password]).to include('deve conter pelo menos um caractere especial (!@#$%^&* etc)')
+    end
+    
+    it 'accepts strong password' do
+      user = build(:user, password: 'MyP@ssw0rd123', password_confirmation: 'MyP@ssw0rd123')
+      expect(user).to be_valid
+    end
+    
+    it 'accepts password with minimum requirements' do
+      user = build(:user, password: 'Abc123!', password_confirmation: 'Abc123!')
+      expect(user).to be_valid
+    end
+  end
 end
