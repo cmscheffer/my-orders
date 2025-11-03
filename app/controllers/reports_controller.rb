@@ -2,7 +2,7 @@
 
 class ReportsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_date_range, only: [:index, :orders_by_period, :revenue, :technicians]
+  before_action :set_date_range, only: [:index, :orders_by_period, :revenue, :technicians, :customers]
 
   def index
     # Página inicial de relatórios com links para relatórios específicos
