@@ -78,21 +78,32 @@ class ReportsController < ApplicationController
   # Relatório de clientes
   def customers
     @scope = current_user.admin? ? ServiceOrder.all : current_user.service_orders
+    orders = @scope.where(created_at: @start_date..@end_date)
     
-    # Agrupa dados de clientes e calcula estatísticas
-    customers_grouped = @scope
-      .where(created_at: @start_date..@end_date)
-      .group(:customer_name)
-      .select(
-        'customer_name',
-        'MAX(customer_email) as customer_email',
-        'MAX(customer_phone) as customer_phone',
-        'COUNT(*) as orders_count',
-        'SUM(total_value) as total_spent'
-      )
+    # Agrupa manualmente os dados de clientes
+    customers_hash = {}
     
-    # Converte para array e ordena por orders_count
-    @customers_data = customers_grouped.to_a.sort_by { |c| -c.orders_count.to_i }
+    orders.each do |order|
+      name = order.customer_name
+      
+      if customers_hash[name]
+        customers_hash[name][:orders_count] += 1
+        customers_hash[name][:total_spent] += order.total_value || 0
+      else
+        customers_hash[name] = {
+          customer_name: name,
+          customer_email: order.customer_email,
+          customer_phone: order.customer_phone,
+          orders_count: 1,
+          total_spent: order.total_value || 0
+        }
+      end
+    end
+    
+    # Converte para array de OpenStruct e ordena por orders_count
+    @customers_data = customers_hash.values
+      .map { |data| OpenStruct.new(data) }
+      .sort_by { |c| -c.orders_count }
 
     respond_to do |format|
       format.html
