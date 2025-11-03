@@ -56,7 +56,7 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><%= link_to raw('<i class="fas fa-user"></i> Meu Perfil'), user_path(current_user), class: "dropdown-item" %></li>
-            <li><%= link_to raw('<i class="fas fa-key"></i> Alterar Senha'), edit_user_registration_path, class: "dropdown-item" %></li>
+            <li><%= link_to raw('<i class="fas fa-key"></i> Editar Perfil'), edit_user_path(current_user), class: "dropdown-item" %></li>
             <li><hr class="dropdown-divider"></li>
             <li><%= button_to raw('<i class="fas fa-sign-out-alt"></i> Sair'), destroy_user_session_path, method: :delete, class: "dropdown-item text-danger" %></li>
           </ul>
