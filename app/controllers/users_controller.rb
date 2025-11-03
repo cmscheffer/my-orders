@@ -12,14 +12,25 @@ class UsersController < ApplicationController
   end
 
   def new
+    Rails.logger.info "📝 Acessando formulário de NOVO usuário"
     @user = User.new
+    Rails.logger.info "User novo criado: #{@user.inspect}"
   end
 
   def create
     Rails.logger.info "=" * 80
-    Rails.logger.info "🔍 DEBUG - Criando usuário"
-    Rails.logger.info "Params recebidos: #{params.inspect}"
-    Rails.logger.info "User params filtrados: #{user_params.inspect}"
+    Rails.logger.info "🔍 DEBUG - Criando usuário VIA WEB"
+    Rails.logger.info "=" * 80
+    Rails.logger.info "📥 PARAMS BRUTOS:"
+    Rails.logger.info params.inspect
+    Rails.logger.info ""
+    Rails.logger.info "📋 USER PARAMS FILTRADOS:"
+    Rails.logger.info user_params.inspect
+    Rails.logger.info ""
+    Rails.logger.info "🔑 PASSWORD INFO:"
+    Rails.logger.info "  - password presente em params[:user]? #{params[:user][:password].present?}"
+    Rails.logger.info "  - password valor: #{params[:user][:password].present? ? '[PRESENTE]' : '[AUSENTE]'}"
+    Rails.logger.info "  - password_confirmation presente? #{params[:user][:password_confirmation].present?}"
     
     @user = User.new(user_params)
     @user.password = params[:user][:password] if params[:user][:password].present?
