@@ -59,6 +59,9 @@ Rails.application.routes.draw do
   # CSP Reports (Security)
   post "csp_reports", to: "csp_reports#create"
   
+  # Chrome Dev Tools - Silenciar requisição conhecida
+  get "/.well-known/appspecific/com.chrome.devtools.json", to: proc { [204, {}, []] }
+  
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

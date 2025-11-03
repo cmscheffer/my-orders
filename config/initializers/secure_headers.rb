@@ -139,5 +139,5 @@ end
 # Logging de violações CSP (desenvolvimento)
 if Rails.env.development?
   # Para debug, você pode ver violações CSP no console
-  Rails.application.config.action_dispatch.show_exceptions = true
+  Rails.application.config.action_dispatch.show_exceptions = :all
 end
