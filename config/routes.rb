@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users
+  # Devise routes - EXCETO registrations (criação de conta)
+  # Admins criam usuários via UsersController, não via auto-registro
+  devise_for :users, skip: [:registrations]
   
   # Define root path
   root "service_orders#index"
