@@ -12,9 +12,13 @@ class UsersController < ApplicationController
   end
 
   def new
-    Rails.logger.info "📝 Acessando formulário de NOVO usuário"
+    Rails.logger.info "=" * 80
+    Rails.logger.info "📝 ACTION: NEW - Acessando formulário de NOVO usuário"
+    Rails.logger.info "  - Current user: #{current_user.email}"
+    Rails.logger.info "  - Is admin?: #{current_user.admin?}"
     @user = User.new
-    Rails.logger.info "User novo criado: #{@user.inspect}"
+    Rails.logger.info "  - User object criado: #{@user.new_record?}"
+    Rails.logger.info "=" * 80
   end
 
   def create
@@ -124,8 +128,19 @@ class UsersController < ApplicationController
   end
 
   def authorize_admin!
+    Rails.logger.info "🔐 VERIFICANDO AUTORIZAÇÃO ADMIN"
+    Rails.logger.info "  - Current user: #{current_user.inspect}"
+    Rails.logger.info "  - Current user email: #{current_user.email}"
+    Rails.logger.info "  - Current user role: #{current_user.role}"
+    Rails.logger.info "  - Current user admin?: #{current_user.admin?}"
+    Rails.logger.info "  - Action: #{action_name}"
+    
     unless current_user.admin?
+      Rails.logger.error "❌ ACESSO NEGADO! Usuário não é admin"
+      Rails.logger.error "  - Redirecionando para: root_path"
       redirect_to root_path, alert: 'Acesso negado. Apenas administradores.'
+    else
+      Rails.logger.info "✅ Autorização OK - Usuário é admin"
     end
   end
 
