@@ -1,0 +1,212 @@
+<div class="container-fluid mt-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <i class="fas fa-user-friends"></i>
+      <%= @customer.name %>
+      <% if @customer.active? %>
+        <span class="badge bg-success">Ativo</span>
+      <% else %>
+        <span class="badge bg-secondary">Inativo</span>
+      <% end %>
+    </h1>
+    
+    <div>
+      <%= link_to customers_path, class: "btn btn-secondary" do %>
+        <i class="fas fa-arrow-left"></i> Voltar
+      <% end %>
+      
+      <%= link_to edit_customer_path(@customer), class: "btn btn-warning" do %>
+        <i class="fas fa-edit"></i> Editar
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Customer Info Card -->
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle"></i>
+            Informações do Cliente
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <strong><i class="fas fa-user"></i> Nome:</strong><br>
+            <%= @customer.name %>
+          </div>
+          
+          <div class="mb-3">
+            <strong><i class="fas fa-envelope"></i> Email:</strong><br>
+            <% if @customer.email.present? %>
+              <%= mail_to @customer.email, @customer.email %>
+            <% else %>
+              <span class="text-muted">Não informado</span>
+            <% end %>
+          </div>
+          
+          <div class="mb-3">
+            <strong><i class="fas fa-phone"></i> Telefone:</strong><br>
+            <%= @customer.phone %>
+          </div>
+          
+          <hr>
+          
+          <div class="mb-3">
+            <strong><i class="fas fa-map-marker-alt"></i> Endereço:</strong><br>
+            <% if @customer.address.present? %>
+              <%= @customer.address %><br>
+              <% if @customer.city.present? && @customer.state.present? %>
+                <%= @customer.city %> - <%= @customer.state %>
+              <% end %>
+              <% if @customer.zip_code.present? %>
+                <br>CEP: <%= @customer.zip_code %>
+              <% end %>
+            <% else %>
+              <span class="text-muted">Não informado</span>
+            <% end %>
+          </div>
+          
+          <% if @customer.notes.present? %>
+            <hr>
+            <div class="mb-3">
+              <strong><i class="fas fa-sticky-note"></i> Observações:</strong><br>
+              <%= simple_format(@customer.notes) %>
+            </div>
+          <% end %>
+          
+          <hr>
+          
+          <div class="mb-2">
+            <strong><i class="fas fa-calendar"></i> Cadastrado em:</strong><br>
+            <%= l(@customer.created_at, format: :long) %>
+          </div>
+          
+          <% if @customer.created_at != @customer.updated_at %>
+            <div class="mb-2">
+              <strong><i class="fas fa-clock"></i> Última atualização:</strong><br>
+              <%= l(@customer.updated_at, format: :long) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics and Orders -->
+    <div class="col-md-8">
+      <!-- Statistics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+              <h6>Total de Ordens</h6>
+              <h2><%= @customer.total_orders %></h2>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card bg-success text-white">
+            <div class="card-body text-center">
+              <h6>Total Gasto</h6>
+              <h2><%= number_to_currency(@customer.total_spent) %></h2>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card bg-info text-white">
+            <div class="card-body text-center">
+              <h6>Última Ordem</h6>
+              <h2>
+                <% if @customer.last_order %>
+                  <%= time_ago_in_words(@customer.last_order.created_at) %>
+                <% else %>
+                  -
+                <% end %>
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Orders -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-clipboard-list"></i>
+            Histórico de Ordens de Serviço
+          </h5>
+        </div>
+        <div class="card-body">
+          <% if @orders.any? %>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>OS #</th>
+                    <th>Equipamento</th>
+                    <th>Técnico</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th class="text-end">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @orders.each do |order| %>
+                    <tr>
+                      <td>
+                        <strong>#<%= order.id %></strong>
+                      </td>
+                      <td><%= order.equipment_type %></td>
+                      <td>
+                        <% if order.technician_name.present? %>
+                          <i class="fas fa-user-tie text-muted"></i>
+                          <%= order.technician_name %>
+                        <% else %>
+                          <span class="text-muted">-</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% case order.status %>
+                        <% when 'pending' %>
+                          <span class="badge bg-warning">Pendente</span>
+                        <% when 'in_progress' %>
+                          <span class="badge bg-primary">Em Andamento</span>
+                        <% when 'completed' %>
+                          <span class="badge bg-success">Concluída</span>
+                        <% when 'cancelled' %>
+                          <span class="badge bg-danger">Cancelada</span>
+                        <% end %>
+                      </td>
+                      <td><%= l(order.created_at, format: :short) %></td>
+                      <td><%= number_to_currency(order.total_value) %></td>
+                      <td class="text-end">
+                        <%= link_to service_order_path(order), class: "btn btn-sm btn-info" do %>
+                          <i class="fas fa-eye"></i>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-3">
+              <%= paginate @orders, param_name: :page %>
+            </div>
+          <% else %>
+            <div class="alert alert-info text-center">
+              <i class="fas fa-info-circle"></i>
+              Este cliente ainda não possui ordens de serviço.
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

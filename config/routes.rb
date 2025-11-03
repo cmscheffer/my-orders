@@ -27,6 +27,13 @@ Rails.application.routes.draw do
     end
   end
   
+  # Customers routes
+  resources :customers do
+    member do
+      patch :toggle_active
+    end
+  end
+  
   # Dashboard
   get "dashboard", to: "dashboard#index"
   

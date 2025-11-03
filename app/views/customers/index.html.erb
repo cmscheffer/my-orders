@@ -1,0 +1,198 @@
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <i class="fas fa-user-friends"></i>
+      Clientes
+    </h1>
+    <%= link_to new_customer_path, class: "btn btn-primary" do %>
+      <i class="fas fa-plus"></i> Novo Cliente
+    <% end %>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with url: customers_path, method: :get, local: true, class: "row g-3" do |f| %>
+        <div class="col-md-4">
+          <%= f.text_field :search, 
+                          value: params[:search],
+                          class: "form-control", 
+                          placeholder: "Buscar por nome, email ou telefone" %>
+        </div>
+        
+        <div class="col-md-3">
+          <%= f.select :active,
+                      options_for_select([
+                        ['Todos os Status', ''],
+                        ['Apenas Ativos', 'true'],
+                        ['Apenas Inativos', 'false']
+                      ], params[:active]),
+                      {},
+                      class: "form-select" %>
+        </div>
+        
+        <div class="col-md-3">
+          <%= f.select :sort,
+                      options_for_select([
+                        ['Ordem Alfabética', 'name'],
+                        ['Mais Recentes', 'recent']
+                      ], params[:sort]),
+                      {},
+                      class: "form-select" %>
+        </div>
+        
+        <div class="col-md-2">
+          <%= f.submit "Filtrar", class: "btn btn-secondary w-100" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <h5 class="card-title">Total de Clientes</h5>
+          <h2><%= Customer.count %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <h5 class="card-title">Clientes Ativos</h5>
+          <h2><%= Customer.active.count %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-warning text-white">
+        <div class="card-body">
+          <h5 class="card-title">Clientes Inativos</h5>
+          <h2><%= Customer.where(active: false).count %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <h5 class="card-title">Resultados</h5>
+          <h2><%= @customers.total_count %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customers Table -->
+  <div class="card">
+    <div class="card-body">
+      <% if @customers.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Cidade/Estado</th>
+                <th class="text-center">Ordens</th>
+                <th class="text-center">Status</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @customers.each do |customer| %>
+                <tr>
+                  <td>
+                    <strong><%= link_to customer.name, customer_path(customer) %></strong>
+                  </td>
+                  <td>
+                    <% if customer.email.present? %>
+                      <i class="fas fa-envelope text-muted"></i>
+                      <%= customer.email %>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <i class="fas fa-phone text-muted"></i>
+                    <%= customer.phone %>
+                  </td>
+                  <td>
+                    <% if customer.city.present? && customer.state.present? %>
+                      <i class="fas fa-map-marker-alt text-muted"></i>
+                      <%= "#{customer.city}/#{customer.state}" %>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                  <td class="text-center">
+                    <% orders_count = customer.total_orders %>
+                    <% if orders_count > 0 %>
+                      <span class="badge bg-primary"><%= orders_count %></span>
+                    <% else %>
+                      <span class="text-muted">0</span>
+                    <% end %>
+                  </td>
+                  <td class="text-center">
+                    <% if customer.active? %>
+                      <span class="badge bg-success">Ativo</span>
+                    <% else %>
+                      <span class="badge bg-secondary">Inativo</span>
+                    <% end %>
+                  </td>
+                  <td class="text-end">
+                    <div class="btn-group" role="group">
+                      <%= link_to customer_path(customer), class: "btn btn-sm btn-info", title: "Ver Detalhes" do %>
+                        <i class="fas fa-eye"></i>
+                      <% end %>
+                      
+                      <%= link_to edit_customer_path(customer), class: "btn btn-sm btn-warning", title: "Editar" do %>
+                        <i class="fas fa-edit"></i>
+                      <% end %>
+                      
+                      <%= button_to toggle_active_customer_path(customer),
+                                   method: :patch,
+                                   class: "btn btn-sm #{customer.active? ? 'btn-secondary' : 'btn-success'}",
+                                   title: customer.active? ? 'Inativar' : 'Ativar',
+                                   data: { turbo_confirm: "Tem certeza que deseja #{customer.active? ? 'inativar' : 'ativar'} este cliente?" } do %>
+                        <i class="fas fa-power-off"></i>
+                      <% end %>
+                      
+                      <% if customer.total_orders.zero? %>
+                        <%= button_to customer_path(customer),
+                                     method: :delete,
+                                     class: "btn btn-sm btn-danger",
+                                     title: "Excluir",
+                                     data: { turbo_confirm: "Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita." } do %>
+                          <i class="fas fa-trash"></i>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+          <%= paginate @customers %>
+        </div>
+      <% else %>
+        <div class="alert alert-info text-center">
+          <i class="fas fa-info-circle"></i>
+          Nenhum cliente encontrado.
+          <% if params[:search].present? || params[:active].present? %>
+            <%= link_to "Limpar Filtros", customers_path, class: "btn btn-sm btn-secondary ms-2" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

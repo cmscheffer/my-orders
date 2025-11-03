@@ -1,0 +1,49 @@
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <i class="fas fa-user-edit"></i>
+      Editar Cliente: <%= @customer.name %>
+    </h1>
+    
+    <div>
+      <%= link_to customer_path(@customer), class: "btn btn-secondary" do %>
+        <i class="fas fa-arrow-left"></i> Voltar
+      <% end %>
+    </div>
+  </div>
+
+  <%= render "form", customer: @customer %>
+  
+  <!-- Danger Zone -->
+  <% if @customer.total_orders.zero? %>
+    <div class="card border-danger mt-4">
+      <div class="card-header bg-danger text-white">
+        <h5 class="mb-0">
+          <i class="fas fa-exclamation-triangle"></i>
+          Zona de Perigo
+        </h5>
+      </div>
+      <div class="card-body">
+        <p>
+          <strong>Excluir este cliente permanentemente.</strong><br>
+          Esta ação não pode ser desfeita. Todos os dados do cliente serão removidos do sistema.
+        </p>
+        <%= button_to "Excluir Cliente", 
+                     customer_path(@customer),
+                     method: :delete,
+                     class: "btn btn-danger",
+                     data: { 
+                       turbo_confirm: "ATENÇÃO: Tem certeza ABSOLUTA que deseja excluir #{@customer.name}? Esta ação é IRREVERSÍVEL e todos os dados serão perdidos permanentemente. Digite SIM para confirmar." 
+                     } do %>
+          <i class="fas fa-trash"></i> Excluir Cliente Permanentemente
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-warning mt-4">
+      <i class="fas fa-info-circle"></i>
+      <strong>Este cliente não pode ser excluído</strong> porque possui <%= pluralize(@customer.total_orders, 'ordem de serviço', 'ordens de serviço') %> associada(s).
+      Você pode inativá-lo usando o botão "Cliente Ativo" no formulário acima.
+    </div>
+  <% end %>
+</div>
