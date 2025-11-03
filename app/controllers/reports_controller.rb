@@ -78,13 +78,21 @@ class ReportsController < ApplicationController
   # Relatório de clientes
   def customers
     @scope = current_user.admin? ? ServiceOrder.all : current_user.service_orders
-    @customers_data = @scope
+    
+    # Agrupa dados de clientes e calcula estatísticas
+    customers_grouped = @scope
       .where(created_at: @start_date..@end_date)
-      .group(:customer_name, :customer_email, :customer_phone)
-      .select('customer_name, customer_email, customer_phone, 
-               COUNT(*) as orders_count, 
-               SUM(total_value) as total_spent')
-      .order('orders_count DESC')
+      .group(:customer_name)
+      .select(
+        'customer_name',
+        'MAX(customer_email) as customer_email',
+        'MAX(customer_phone) as customer_phone',
+        'COUNT(*) as orders_count',
+        'SUM(total_value) as total_spent'
+      )
+    
+    # Converte para array e ordena por orders_count
+    @customers_data = customers_grouped.to_a.sort_by { |c| -c.orders_count.to_i }
 
     respond_to do |format|
       format.html

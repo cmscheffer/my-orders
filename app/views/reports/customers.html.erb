@@ -63,7 +63,7 @@
       <div class="card bg-success text-white">
         <div class="card-body text-center">
           <h6>Total de Ordens</h6>
-          <h2><%= @customers_data.sum(&:orders_count) %></h2>
+          <h2><%= @customers_data.sum { |c| c.orders_count.to_i } %></h2>
         </div>
       </div>
     </div>
@@ -73,8 +73,8 @@
         <div class="card-body text-center">
           <h6>Ticket Médio</h6>
           <h2>
-            <% total_spent = @customers_data.sum(&:total_spent) %>
-            <% total_orders = @customers_data.sum(&:orders_count) %>
+            <% total_spent = @customers_data.sum { |c| c.total_spent.to_f } %>
+            <% total_orders = @customers_data.sum { |c| c.orders_count.to_i } %>
             <%= number_to_currency(total_orders > 0 ? total_spent / total_orders : 0) %>
           </h2>
         </div>
@@ -85,7 +85,7 @@
       <div class="card bg-warning text-white">
         <div class="card-body text-center">
           <h6>Receita Total</h6>
-          <h2><%= number_to_currency(@customers_data.sum(&:total_spent)) %></h2>
+          <h2><%= number_to_currency(@customers_data.sum { |c| c.total_spent.to_f }) %></h2>
         </div>
       </div>
     </div>
@@ -157,16 +157,16 @@
                   </td>
                   <td class="text-center">
                     <span class="badge bg-primary rounded-pill">
-                      <%= customer.orders_count %>
+                      <%= customer.orders_count.to_i %>
                     </span>
                   </td>
                   <td class="text-end">
                     <strong class="text-success">
-                      <%= number_to_currency(customer.total_spent) %>
+                      <%= number_to_currency(customer.total_spent.to_f) %>
                     </strong>
                   </td>
                   <td class="text-end">
-                    <%= number_to_currency(customer.total_spent / customer.orders_count) %>
+                    <%= number_to_currency(customer.total_spent.to_f / customer.orders_count.to_i) %>
                   </td>
                 </tr>
               <% end %>
@@ -175,14 +175,14 @@
               <tr>
                 <th colspan="4" class="text-end">TOTAL</th>
                 <th class="text-center">
-                  <%= @customers_data.sum(&:orders_count) %>
+                  <%= @customers_data.sum { |c| c.orders_count.to_i } %>
                 </th>
                 <th class="text-end">
-                  <strong><%= number_to_currency(@customers_data.sum(&:total_spent)) %></strong>
+                  <strong><%= number_to_currency(@customers_data.sum { |c| c.total_spent.to_f }) %></strong>
                 </th>
                 <th class="text-end">
-                  <% total_spent = @customers_data.sum(&:total_spent) %>
-                  <% total_orders = @customers_data.sum(&:orders_count) %>
+                  <% total_spent = @customers_data.sum { |c| c.total_spent.to_f } %>
+                  <% total_orders = @customers_data.sum { |c| c.orders_count.to_i } %>
                   <%= number_to_currency(total_orders > 0 ? total_spent / total_orders : 0) %>
                 </th>
               </tr>
