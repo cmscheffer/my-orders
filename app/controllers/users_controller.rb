@@ -22,8 +22,13 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to users_path, notice: 'Usuário criado com sucesso.'
     else
-      Rails.logger.error "Erro ao criar usuário: #{@user.errors.full_messages.join(', ')}"
-      flash.now[:alert] = 'Erro ao criar usuário. Verifique os campos abaixo.'
+      error_count = @user.errors.count
+      error_list = @user.errors.full_messages.join(', ')
+      
+      Rails.logger.error "❌ Erro ao criar usuário: #{error_list}"
+      
+      error_msg = error_count == 1 ? "1 erro encontrado" : "#{error_count} erros encontrados"
+      flash.now[:alert] = "❌ Falha ao criar usuário! #{error_msg}. Corrija os problemas abaixo."
       render :new, status: :unprocessable_entity
     end
   end
@@ -42,6 +47,13 @@ class UsersController < ApplicationController
     if @user.update(user_update_params)
       redirect_to users_path, notice: 'Usuário atualizado com sucesso.'
     else
+      error_count = @user.errors.count
+      error_list = @user.errors.full_messages.join(', ')
+      
+      Rails.logger.error "❌ Erro ao atualizar usuário: #{error_list}"
+      
+      error_msg = error_count == 1 ? "1 erro encontrado" : "#{error_count} erros encontrados"
+      flash.now[:alert] = "❌ Falha ao atualizar usuário! #{error_msg}. Corrija os problemas abaixo."
       render :edit, status: :unprocessable_entity
     end
   end
