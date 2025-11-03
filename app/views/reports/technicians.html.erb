@@ -1,0 +1,290 @@
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <i class="fas fa-user-tie"></i>
+      Relatório de Técnicos
+    </h1>
+    
+    <div>
+      <%= link_to reports_path, class: "btn btn-secondary" do %>
+        <i class="fas fa-arrow-left"></i> Voltar
+      <% end %>
+      
+      <%= link_to technicians_reports_path(format: :xlsx, start_date: @start_date, end_date: @end_date), class: "btn btn-success" do %>
+        <i class="fas fa-file-excel"></i> Exportar Excel
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Date Range Filter -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with url: technicians_reports_path, method: :get, local: true, class: "row g-3" do |f| %>
+        <div class="col-md-4">
+          <%= f.label :start_date, "Data Inicial", class: "form-label" %>
+          <%= f.date_field :start_date, 
+                          value: @start_date,
+                          class: "form-control" %>
+        </div>
+        
+        <div class="col-md-4">
+          <%= f.label :end_date, "Data Final", class: "form-label" %>
+          <%= f.date_field :end_date, 
+                          value: @end_date,
+                          class: "form-control" %>
+        </div>
+        
+        <div class="col-md-4 d-flex align-items-end">
+          <%= f.submit "Filtrar", class: "btn btn-primary w-100" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Period Info -->
+  <div class="alert alert-info">
+    <i class="fas fa-calendar-alt"></i>
+    <strong>Período:</strong> 
+    <%= l(@start_date, format: :long) %> até <%= l(@end_date, format: :long) %>
+  </div>
+
+  <!-- Technicians Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white">
+        <div class="card-body text-center">
+          <h6>Total de Técnicos</h6>
+          <h2><%= @technicians_data.size %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-success text-white">
+        <div class="card-body text-center">
+          <h6>Total de Ordens</h6>
+          <h2><%= @technicians_data.sum { |t| t[:total_orders] } %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-info text-white">
+        <div class="card-body text-center">
+          <h6>Taxa Média de Conclusão</h6>
+          <h2>
+            <% total_orders = @technicians_data.sum { |t| t[:total_orders] } %>
+            <% total_completed = @technicians_data.sum { |t| t[:completed] } %>
+            <%= total_orders > 0 ? ((total_completed.to_f / total_orders) * 100).round(1) : 0 %>%
+          </h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-warning text-white">
+        <div class="card-body text-center">
+          <h6>Receita Total</h6>
+          <h2><%= number_to_currency(@technicians_data.sum { |t| t[:total_revenue] }) %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technicians Performance Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <i class="fas fa-chart-line"></i>
+        Desempenho por Técnico
+      </h5>
+    </div>
+    <div class="card-body">
+      <% if @technicians_data.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Técnico</th>
+                <th class="text-center">Total de Ordens</th>
+                <th class="text-center">Concluídas</th>
+                <th class="text-center">Em Andamento</th>
+                <th class="text-center">Pendentes</th>
+                <th class="text-center">Taxa de Conclusão</th>
+                <th class="text-end">Receita Total</th>
+                <th class="text-center">Tempo Médio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @technicians_data.sort_by { |t| -t[:total_orders] }.each do |data| %>
+                <tr>
+                  <td>
+                    <strong><%= data[:technician].name %></strong>
+                    <% if data[:technician].specialty.present? %>
+                      <br>
+                      <small class="text-muted">
+                        <i class="fas fa-tools"></i>
+                        <%= data[:technician].specialty %>
+                      </small>
+                    <% end %>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-primary rounded-pill">
+                      <%= data[:total_orders] %>
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-success rounded-pill">
+                      <%= data[:completed] %>
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-info rounded-pill">
+                      <%= data[:in_progress] %>
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-warning rounded-pill">
+                      <%= data[:pending] %>
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <% rate = data[:completion_rate] %>
+                    <div class="progress" style="height: 25px;">
+                      <div class="progress-bar <%= rate >= 80 ? 'bg-success' : (rate >= 50 ? 'bg-warning' : 'bg-danger') %>" 
+                           role="progressbar" 
+                           style="width: <%= rate %>%"
+                           aria-valuenow="<%= rate %>" 
+                           aria-valuemin="0" 
+                           aria-valuemax="100">
+                        <%= rate %>%
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-end">
+                    <strong><%= number_to_currency(data[:total_revenue]) %></strong>
+                  </td>
+                  <td class="text-center">
+                    <% if data[:average_completion_time] > 0 %>
+                      <span class="badge bg-secondary">
+                        <%= data[:average_completion_time] %> dias
+                      </span>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot class="table-light">
+              <tr>
+                <th>TOTAL</th>
+                <th class="text-center">
+                  <%= @technicians_data.sum { |t| t[:total_orders] } %>
+                </th>
+                <th class="text-center">
+                  <%= @technicians_data.sum { |t| t[:completed] } %>
+                </th>
+                <th class="text-center">
+                  <%= @technicians_data.sum { |t| t[:in_progress] } %>
+                </th>
+                <th class="text-center">
+                  <%= @technicians_data.sum { |t| t[:pending] } %>
+                </th>
+                <th class="text-center">
+                  <% total = @technicians_data.sum { |t| t[:total_orders] } %>
+                  <% completed = @technicians_data.sum { |t| t[:completed] } %>
+                  <%= total > 0 ? ((completed.to_f / total) * 100).round(1) : 0 %>%
+                </th>
+                <th class="text-end">
+                  <strong><%= number_to_currency(@technicians_data.sum { |t| t[:total_revenue] }) %></strong>
+                </th>
+                <th class="text-center">-</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info text-center">
+          <i class="fas fa-info-circle"></i>
+          Nenhum técnico encontrado ou nenhuma ordem no período selecionado.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Performance Chart -->
+  <% if @technicians_data.any? %>
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-chart-bar"></i>
+          Comparativo de Performance
+        </h5>
+      </div>
+      <div class="card-body">
+        <canvas id="techniciansChart" height="100"></canvas>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('techniciansChart').getContext('2d');
+        
+        const data = {
+          labels: <%= raw @technicians_data.map { |t| t[:technician].name }.to_json %>,
+          datasets: [
+            {
+              label: 'Ordens Totais',
+              data: <%= raw @technicians_data.map { |t| t[:total_orders] }.to_json %>,
+              backgroundColor: 'rgba(13, 110, 253, 0.5)',
+              borderColor: 'rgba(13, 110, 253, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Ordens Concluídas',
+              data: <%= raw @technicians_data.map { |t| t[:completed] }.to_json %>,
+              backgroundColor: 'rgba(25, 135, 84, 0.5)',
+              borderColor: 'rgba(25, 135, 84, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Em Andamento',
+              data: <%= raw @technicians_data.map { |t| t[:in_progress] }.to_json %>,
+              backgroundColor: 'rgba(13, 202, 240, 0.5)',
+              borderColor: 'rgba(13, 202, 240, 1)',
+              borderWidth: 1
+            }
+          ]
+        };
+
+        const config = {
+          type: 'bar',
+          data: data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 1
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: false
+              }
+            }
+          }
+        };
+
+        new Chart(ctx, config);
+      });
+    </script>
+  <% end %>
+</div>

@@ -1,0 +1,313 @@
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <i class="fas fa-user-friends"></i>
+      Relatório de Clientes
+    </h1>
+    
+    <div>
+      <%= link_to reports_path, class: "btn btn-secondary" do %>
+        <i class="fas fa-arrow-left"></i> Voltar
+      <% end %>
+      
+      <%= link_to customers_reports_path(format: :xlsx, start_date: @start_date, end_date: @end_date), class: "btn btn-success" do %>
+        <i class="fas fa-file-excel"></i> Exportar Excel
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Date Range Filter -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with url: customers_reports_path, method: :get, local: true, class: "row g-3" do |f| %>
+        <div class="col-md-4">
+          <%= f.label :start_date, "Data Inicial", class: "form-label" %>
+          <%= f.date_field :start_date, 
+                          value: @start_date,
+                          class: "form-control" %>
+        </div>
+        
+        <div class="col-md-4">
+          <%= f.label :end_date, "Data Final", class: "form-label" %>
+          <%= f.date_field :end_date, 
+                          value: @end_date,
+                          class: "form-control" %>
+        </div>
+        
+        <div class="col-md-4 d-flex align-items-end">
+          <%= f.submit "Filtrar", class: "btn btn-primary w-100" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Period Info -->
+  <div class="alert alert-info">
+    <i class="fas fa-calendar-alt"></i>
+    <strong>Período:</strong> 
+    <%= l(@start_date, format: :long) %> até <%= l(@end_date, format: :long) %>
+  </div>
+
+  <!-- Customers Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white">
+        <div class="card-body text-center">
+          <h6>Total de Clientes</h6>
+          <h2><%= @customers_data.size %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-success text-white">
+        <div class="card-body text-center">
+          <h6>Total de Ordens</h6>
+          <h2><%= @customers_data.sum(&:orders_count) %></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-info text-white">
+        <div class="card-body text-center">
+          <h6>Ticket Médio</h6>
+          <h2>
+            <% total_spent = @customers_data.sum(&:total_spent) %>
+            <% total_orders = @customers_data.sum(&:orders_count) %>
+            <%= number_to_currency(total_orders > 0 ? total_spent / total_orders : 0) %>
+          </h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card bg-warning text-white">
+        <div class="card-body text-center">
+          <h6>Receita Total</h6>
+          <h2><%= number_to_currency(@customers_data.sum(&:total_spent)) %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Customers Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <i class="fas fa-trophy"></i>
+        Top Clientes por Volume
+      </h5>
+    </div>
+    <div class="card-body">
+      <% if @customers_data.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Posição</th>
+                <th>Cliente</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th class="text-center">Nº de Ordens</th>
+                <th class="text-end">Valor Total Gasto</th>
+                <th class="text-end">Ticket Médio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @customers_data.each_with_index do |customer, index| %>
+                <tr>
+                  <td class="text-center">
+                    <% if index == 0 %>
+                      <span class="badge bg-warning text-dark">
+                        <i class="fas fa-trophy"></i> 1º
+                      </span>
+                    <% elsif index == 1 %>
+                      <span class="badge bg-secondary">
+                        <i class="fas fa-medal"></i> 2º
+                      </span>
+                    <% elsif index == 2 %>
+                      <span class="badge bg-secondary">
+                        <i class="fas fa-medal"></i> 3º
+                      </span>
+                    <% else %>
+                      <span class="badge bg-light text-dark">
+                        <%= index + 1 %>º
+                      </span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <strong><%= customer.customer_name %></strong>
+                  </td>
+                  <td>
+                    <% if customer.customer_email.present? %>
+                      <i class="fas fa-envelope text-muted"></i>
+                      <%= customer.customer_email %>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if customer.customer_phone.present? %>
+                      <i class="fas fa-phone text-muted"></i>
+                      <%= customer.customer_phone %>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-primary rounded-pill">
+                      <%= customer.orders_count %>
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <strong class="text-success">
+                      <%= number_to_currency(customer.total_spent) %>
+                    </strong>
+                  </td>
+                  <td class="text-end">
+                    <%= number_to_currency(customer.total_spent / customer.orders_count) %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot class="table-light">
+              <tr>
+                <th colspan="4" class="text-end">TOTAL</th>
+                <th class="text-center">
+                  <%= @customers_data.sum(&:orders_count) %>
+                </th>
+                <th class="text-end">
+                  <strong><%= number_to_currency(@customers_data.sum(&:total_spent)) %></strong>
+                </th>
+                <th class="text-end">
+                  <% total_spent = @customers_data.sum(&:total_spent) %>
+                  <% total_orders = @customers_data.sum(&:orders_count) %>
+                  <%= number_to_currency(total_orders > 0 ? total_spent / total_orders : 0) %>
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info text-center">
+          <i class="fas fa-info-circle"></i>
+          Nenhum cliente encontrado no período selecionado.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Customer Distribution Charts -->
+  <% if @customers_data.any? && @customers_data.size > 1 %>
+    <div class="row mt-4">
+      <!-- Top 10 Customers by Orders -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-chart-pie"></i>
+              Top 10 - Por Quantidade de Ordens
+            </h5>
+          </div>
+          <div class="card-body">
+            <canvas id="ordersChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 10 Customers by Revenue -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-chart-bar"></i>
+              Top 10 - Por Receita Gerada
+            </h5>
+          </div>
+          <div class="card-body">
+            <canvas id="revenueChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const top10Data = <%= raw @customers_data.take(10).to_json %>;
+        
+        // Colors for charts
+        const colors = [
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)',
+          'rgba(153, 102, 255, 0.8)',
+          'rgba(255, 159, 64, 0.8)',
+          'rgba(199, 199, 199, 0.8)',
+          'rgba(83, 102, 255, 0.8)',
+          'rgba(255, 99, 255, 0.8)',
+          'rgba(99, 255, 132, 0.8)'
+        ];
+
+        // Orders Chart (Pie)
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        new Chart(ordersCtx, {
+          type: 'pie',
+          data: {
+            labels: top10Data.map(c => c.customer_name),
+            datasets: [{
+              data: top10Data.map(c => c.orders_count),
+              backgroundColor: colors,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              }
+            }
+          }
+        });
+
+        // Revenue Chart (Bar)
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+          type: 'bar',
+          data: {
+            labels: top10Data.map(c => c.customer_name),
+            datasets: [{
+              label: 'Receita (R$)',
+              data: top10Data.map(c => parseFloat(c.total_spent)),
+              backgroundColor: 'rgba(25, 135, 84, 0.8)',
+              borderColor: 'rgba(25, 135, 84, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                  }
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+      });
+    </script>
+  <% end %>
+</div>
