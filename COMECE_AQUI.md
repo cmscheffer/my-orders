@@ -155,7 +155,7 @@ Se você está lendo isso, provavelmente quer:
 ┌───────────────┐      ┌────────────────┐
 │ Básica (PDF)  │      │ Oficial        │
 │ Grátis        │      │ NFE.io         │
-│ 30 min        │      │ R$ 20-200/mês  │
+│ 30 min        │      │ R$ 179-229/mês │
 │ Sem validade  │      │ Com validade   │
 └───────────────┘      └────────────────┘
         │                       │
@@ -170,14 +170,40 @@ Se você está lendo isso, provavelmente quer:
 
 ## 💰 CUSTOS RÁPIDOS
 
+⚠️ **ATENÇÃO:** Preços atualizados (NFE.io aumentou!)
+
+### Opção 1: Com NFE.io (NFS-e Oficial)
+
 | Item | Mensal | Anual |
 |------|--------|-------|
 | Servidor (2GB) | R$ 60 | R$ 720 |
-| NFE.io Starter | R$ 20 | R$ 240 |
+| **NFE.io Base** | **R$ 179** | **R$ 2.148** |
 | Certificado Digital | R$ 20 | R$ 250 |
-| **TOTAL** | **R$ 100** | **R$ 1.210** |
+| **TOTAL** | **R$ 259** | **R$ 3.118** |
 
-**Nota:** Certificado digital e-CNPJ A1 necessário apenas para nota fiscal oficial.
+**Ou NFE.io Anual (mais econômico):**
+- NFE.io: R$ 143/mês (pagando R$ 1.719/ano)
+- **Total: R$ 229/mês** (R$ 2.761/ano)
+
+### Opção 2: API Direta (sem NFE.io)
+
+| Item | Mensal | Anual |
+|------|--------|-------|
+| Servidor (2GB) | R$ 60 | R$ 720 |
+| Certificado Digital | R$ 20 | R$ 250 |
+| **TOTAL** | **R$ 86** | **R$ 1.042** |
+
+**Economia:** R$ 1.719/ano vs NFE.io
+**Requer:** Desenvolvedor experiente, 1-2 semanas
+
+### Opção 3: Apenas PDF Básico (controle interno)
+
+| Item | Mensal | Anual |
+|------|--------|-------|
+| Servidor (2GB) | R$ 60 | R$ 720 |
+| **TOTAL** | **R$ 66** | **R$ 792** |
+
+**📄 Detalhes:** [CORRECAO_PRECOS_NFEIO.md](CORRECAO_PRECOS_NFEIO.md)
 
 ---
 
@@ -237,12 +263,14 @@ Se você está lendo isso, provavelmente quer:
 ## 📊 ESTATÍSTICAS
 
 ```
-📚 Total de Guias:        20 arquivos
-📏 Tamanho Total:         ~380 KB
-📝 Linhas de Doc:         ~8.800
+📚 Total de Guias:        21 arquivos (+CORRECAO_PRECOS)
+📏 Tamanho Total:         ~385 KB
+📝 Linhas de Doc:         ~9.000
 🎯 Cobertura:             100%
 ⏱️ Tempo Deploy:          4-5h (ou 1h)
-💰 Custo Mensal:          ~R$ 100
+💰 Custo Mensal (NFE.io): R$ 229 (anual) ou R$ 259 (mensal)
+💰 Custo Mensal (API):    R$ 86
+💰 Custo Mensal (PDF):    R$ 66
 ✅ Status:                PRONTO PARA USO
 ```
 
