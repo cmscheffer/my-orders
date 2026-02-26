@@ -201,7 +201,8 @@ rbenv global 3.2.0
 ruby -v  # Deve mostrar: ruby 3.2.0
 
 # Bundler e Rails
-gem install bundler rails -v 7.1.6
+gem install bundler
+gem install rails -v 7.1.6
 ```
 
 ### 📦 Instalar Node.js e Yarn
